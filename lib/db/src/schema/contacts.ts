@@ -9,7 +9,7 @@ export const contactsTable = sqliteTable("contacts", {
   name: text("name").notNull(),
   phone: text("phone").notNull(),
   email: text("email"),
-  tags: text("tags").array().notNull().default([]),
+  tags: text("tags", { mode: "json" }).$type<string[]>().notNull().default([]),
   notes: text("notes"),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull().defaultNow(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().defaultNow().$onUpdate(() => new Date()),

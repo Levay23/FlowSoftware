@@ -1,0 +1,836 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: WhatsApp SaaS Platform API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: dashboard
+    description: Dashboard statistics
+  - name: contacts
+    description: Contact management
+  - name: chatbot
+    description: AI Chatbot configuration
+  - name: whatsapp
+    description: WhatsApp connection management
+  - name: training
+    description: AI training data management
+  - name: conversations
+    description: Real-time conversations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterBody"
+      responses:
+        "201":
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Invalid input or email already exists
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/demo:
+    post:
+      operationId: createDemoSession
+      tags: [auth]
+      summary: Create a temporary empty demo session
+      responses:
+        "201":
+          description: Demo session created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user profile
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /auth/change-password:
+    post:
+      operationId: changePassword
+      tags: [auth]
+      summary: Change user password
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChangePasswordBody"
+      responses:
+        "200":
+          description: Password changed successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get dashboard statistics
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Dashboard statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /contacts:
+    get:
+      operationId: getContacts
+      tags: [contacts]
+      summary: List all contacts for current user
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of contacts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Contact"
+    post:
+      operationId: createContact
+      tags: [contacts]
+      summary: Create a new contact
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateContactBody"
+      responses:
+        "201":
+          description: Contact created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contact"
+
+  /contacts/{id}:
+    get:
+      operationId: getContact
+      tags: [contacts]
+      summary: Get a specific contact
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Contact details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contact"
+        "404":
+          description: Contact not found
+    patch:
+      operationId: updateContact
+      tags: [contacts]
+      summary: Update a contact
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateContactBody"
+      responses:
+        "200":
+          description: Contact updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contact"
+    delete:
+      operationId: deleteContact
+      tags: [contacts]
+      summary: Delete a contact
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Contact deleted
+
+  /chatbot/config:
+    get:
+      operationId: getChatbotConfig
+      tags: [chatbot]
+      summary: Get chatbot configuration
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Chatbot configuration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatbotConfig"
+    put:
+      operationId: updateChatbotConfig
+      tags: [chatbot]
+      summary: Update chatbot configuration
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateChatbotConfigBody"
+      responses:
+        "200":
+          description: Chatbot config updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatbotConfig"
+
+  /whatsapp/status:
+    get:
+      operationId: getWhatsappStatus
+      tags: [whatsapp]
+      summary: Get WhatsApp connection status
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: WhatsApp status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WhatsappStatus"
+
+  /whatsapp/connect:
+    post:
+      operationId: connectWhatsapp
+      tags: [whatsapp]
+      summary: Initiate WhatsApp connection (generates QR)
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Connection initiated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WhatsappConnectResponse"
+
+  /whatsapp/disconnect:
+    post:
+      operationId: disconnectWhatsapp
+      tags: [whatsapp]
+      summary: Disconnect WhatsApp session
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Disconnected
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /training/documents:
+    get:
+      operationId: getTrainingDocuments
+      tags: [training]
+      summary: Get training documents for current user
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of training documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrainingDocument"
+    post:
+      operationId: uploadTrainingDocument
+      tags: [training]
+      summary: Upload a training document
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadTrainingDocumentBody"
+      responses:
+        "201":
+          description: Document uploaded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TrainingDocument"
+
+  /training/documents/{id}:
+    delete:
+      operationId: deleteTrainingDocument
+      tags: [training]
+      summary: Delete a training document
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Document deleted
+
+  /conversations:
+    get:
+      operationId: getConversations
+      tags: [conversations]
+      summary: Get list of conversations
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Conversation"
+
+  /conversations/{contactId}/messages:
+    get:
+      operationId: getConversationMessages
+      tags: [conversations]
+      summary: Get messages for a conversation
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: contactId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Conversation messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConversationMessage"
+    post:
+      operationId: sendConversationMessage
+      tags: [conversations]
+      summary: Send a message in a conversation
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: contactId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendMessageBody"
+      responses:
+        "201":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConversationMessage"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    RegisterBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+        name:
+          type: string
+      required:
+        - email
+        - password
+        - name
+
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+      required:
+        - token
+        - user
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [admin, user, demo]
+        createdAt:
+          type: string
+          format: date-time
+        isDemo:
+          type: boolean
+        demoExpiresAt:
+          type: ["string", "null"]
+      required:
+        - id
+        - email
+        - name
+        - role
+        - createdAt
+
+    ChangePasswordBody:
+      type: object
+      properties:
+        currentPassword:
+          type: string
+        newPassword:
+          type: string
+          minLength: 6
+      required:
+        - currentPassword
+        - newPassword
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required:
+        - success
+
+    DashboardStats:
+      type: object
+      properties:
+        whatsappStatus:
+          type: string
+          enum: [connected, disconnected, connecting]
+        totalContacts:
+          type: integer
+        messagesSent:
+          type: integer
+        messagesFailed:
+          type: integer
+        botStatus:
+          type: string
+          enum: [active, inactive]
+        totalConversations:
+          type: integer
+        recentActivity:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivityItem"
+      required:
+        - whatsappStatus
+        - totalContacts
+        - messagesSent
+        - messagesFailed
+        - botStatus
+        - totalConversations
+        - recentActivity
+
+    ActivityItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+        description:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+      required:
+        - id
+        - type
+        - description
+        - timestamp
+
+    Contact:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: ["string", "null"]
+        tags:
+          type: array
+          items:
+            type: string
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - phone
+        - tags
+        - createdAt
+        - updatedAt
+
+    CreateContactBody:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: ["string", "null"]
+        tags:
+          type: array
+          items:
+            type: string
+        notes:
+          type: ["string", "null"]
+      required:
+        - name
+        - phone
+
+    UpdateContactBody:
+      type: object
+      properties:
+        name:
+          type: string
+        phone:
+          type: string
+        email:
+          type: ["string", "null"]
+        tags:
+          type: array
+          items:
+            type: string
+        notes:
+          type: ["string", "null"]
+
+    ChatbotConfig:
+      type: object
+      properties:
+        id:
+          type: integer
+        isActive:
+          type: boolean
+        systemPrompt:
+          type: string
+        welcomeMessage:
+          type: string
+        fallbackMessage:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - isActive
+        - systemPrompt
+        - welcomeMessage
+        - fallbackMessage
+        - updatedAt
+
+    UpdateChatbotConfigBody:
+      type: object
+      properties:
+        isActive:
+          type: boolean
+        systemPrompt:
+          type: string
+        welcomeMessage:
+          type: string
+        fallbackMessage:
+          type: string
+
+    WhatsappStatus:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [connected, disconnected, connecting]
+        phone:
+          type: ["string", "null"]
+        connectedAt:
+          type: ["string", "null"]
+        qrCode:
+          type: ["string", "null"]
+        hasPreviousSession:
+          type: boolean
+      required:
+        - status
+
+    WhatsappConnectResponse:
+      type: object
+      properties:
+        qrCode:
+          type: ["string", "null"]
+        status:
+          type: string
+        connectedAt:
+          type: ["string", "null"]
+        hasPreviousSession:
+          type: boolean
+      required:
+        - status
+
+    TrainingDocument:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        content:
+          type: string
+        fileType:
+          type: string
+        size:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - content
+        - fileType
+        - size
+        - createdAt
+
+    UploadTrainingDocumentBody:
+      type: object
+      properties:
+        name:
+          type: string
+        content:
+          type: string
+        fileType:
+          type: string
+          enum: [txt, pdf]
+      required:
+        - name
+        - content
+        - fileType
+
+    Conversation:
+      type: object
+      properties:
+        id:
+          type: integer
+        contactId:
+          type: integer
+        contactName:
+          type: string
+        contactPhone:
+          type: string
+        lastMessage:
+          type: ["string", "null"]
+        lastMessageAt:
+          type: ["string", "null"]
+        unreadCount:
+          type: integer
+      required:
+        - id
+        - contactId
+        - contactName
+        - contactPhone
+        - unreadCount
+
+    ConversationMessage:
+      type: object
+      properties:
+        id:
+          type: integer
+        conversationId:
+          type: integer
+        content:
+          type: string
+        direction:
+          type: string
+          enum: [inbound, outbound]
+        isBot:
+          type: boolean
+        sentAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - conversationId
+        - content
+        - direction
+        - isBot
+        - sentAt
+
+    SendMessageBody:
+      type: object
+      properties:
+        content:
+          type: string
+      required:
+        - content

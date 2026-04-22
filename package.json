@@ -1,0 +1,21 @@
+{
+  "name": "workspace",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "preinstall": "node -e \"const agent=process.env.npm_config_user_agent||'';if(!agent.startsWith('pnpm/')){console.error('Use pnpm instead');process.exit(1)}\"",
+    "dev": "pnpm --parallel --filter @workspace/api-server --filter @workspace/whatsapp-saas run dev",
+    "db:push": "pnpm --filter @workspace/db run push",
+    "build": "pnpm run typecheck && pnpm -r --if-present run build",
+    "typecheck:libs": "tsc --build",
+    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
+    "firebase:deploy": "pnpm run build && firebase deploy --only hosting",
+    "firebase:deploy:preview": "pnpm run build && firebase hosting:channel:deploy preview"
+  },
+  "private": true,
+  "devDependencies": {
+    "typescript": "~5.9.2",
+    "prettier": "^3.8.1",
+    "firebase-tools": "^14.4.0"
+  }
+}

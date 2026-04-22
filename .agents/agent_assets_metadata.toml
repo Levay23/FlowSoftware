@@ -1,0 +1,8 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "Hg1nFwnZpCYUbpp8s2R0b"
+uri = "file://.download/flowsoftware.tar.gz"
+type = "unspecified"
+title = "FlowSoftware - Proyecto completo"

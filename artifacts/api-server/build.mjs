@@ -101,6 +101,7 @@ async function buildAll() {
       "puppeteer-core",
       "electron",
       "@whiskeysockets/baileys",
+      "@libsql/client",
     ],
     sourcemap: "linked",
     plugins: [

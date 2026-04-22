@@ -41,10 +41,12 @@ Si alguna seccion no aplica, omitela.`;
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
+    // @ts-expect-error - groq api response type
     const message = typeof data?.error?.message === "string" ? data.error.message : "Groq request failed";
     throw new Error(message);
   }
 
+  // @ts-expect-error - groq api response type
   const content = data?.choices?.[0]?.message?.content;
   if (typeof content !== "string" || !content.trim()) throw new Error("Groq returned empty response");
 
@@ -117,10 +119,12 @@ export async function generateGroqReply(params: {
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
+    // @ts-expect-error - groq api response type
     const message = typeof data?.error?.message === "string" ? data.error.message : "Groq request failed";
     throw new Error(message);
   }
 
+  // @ts-expect-error - groq api response type
   const content = data?.choices?.[0]?.message?.content;
 
   if (typeof content !== "string" || !content.trim()) {

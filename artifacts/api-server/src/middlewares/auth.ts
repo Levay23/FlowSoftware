@@ -55,7 +55,7 @@ export function requireAdmin(req: AuthRequest, res: Response, next: NextFunction
 }
 
 export function createToken(userId: number, role: string, expiresIn = "7d"): string {
-  return jwt.sign({ userId, role }, JWT_SECRET, { expiresIn });
+  return jwt.sign({ userId, role }, JWT_SECRET, { expiresIn: expiresIn as any });
 }
 
 export async function cleanupExpiredDemoUsers(): Promise<number> {

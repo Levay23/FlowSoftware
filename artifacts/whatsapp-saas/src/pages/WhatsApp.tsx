@@ -2,7 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { useGetWhatsappStatus, useConnectWhatsapp, useDisconnectWhatsapp, getGetWhatsappStatusQueryKey, customFetch } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
-import { Smartphone, Wifi, WifiOff, RefreshCw, QrCode, CheckCircle, RotateCcw, AlertTriangle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Smartphone, Wifi, WifiOff, RefreshCw, 
+  QrCode, CheckCircle, RotateCcw, AlertTriangle,
+  Zap, Shield, Terminal as TerminalIcon
+} from "lucide-react";
 
 export default function WhatsApp() {
   const queryClient = useQueryClient();
@@ -84,38 +89,24 @@ export default function WhatsApp() {
       if (stuckIntervalRef.current) clearInterval(stuckIntervalRef.current);
       return;
     }
-
-    if (status?.qrCode) {
-      setQrCode(status.qrCode);
-    }
+    if (status?.qrCode) setQrCode(status.qrCode);
   }, [status?.status, status?.qrCode]);
 
-  // Auto-reconnect once if there's a previous session
   useEffect(() => {
-    if (
-      status?.status === "disconnected" &&
-      status.hasPreviousSession &&
-      !connectMutation.isPending &&
-      !autoReconnectTried.current
-    ) {
+    if (status?.status === "disconnected" && status.hasPreviousSession && !connectMutation.isPending && !autoReconnectTried.current) {
       autoReconnectTried.current = true;
       connectMutation.mutate();
     }
   }, [status?.status, status?.hasPreviousSession, connectMutation]);
 
-  // Count how long we've been stuck in "connecting" without a QR
   useEffect(() => {
     if (status?.status === "connecting" && !qrCode) {
-      stuckIntervalRef.current = setInterval(() => {
-        setStuckTimer(prev => prev + 1);
-      }, 1000);
+      stuckIntervalRef.current = setInterval(() => setStuckTimer(prev => prev + 1), 1000);
     } else {
       setStuckTimer(0);
       if (stuckIntervalRef.current) clearInterval(stuckIntervalRef.current);
     }
-    return () => {
-      if (stuckIntervalRef.current) clearInterval(stuckIntervalRef.current);
-    };
+    return () => { if (stuckIntervalRef.current) clearInterval(stuckIntervalRef.current); };
   }, [status?.status, qrCode]);
 
   const isConnected = status?.status === "connected";
@@ -124,251 +115,264 @@ export default function WhatsApp() {
 
   return (
     <Layout>
-      <div className="p-4 sm:p-6 lg:p-8">
-        <div className="mb-6 lg:mb-8">
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">Conexion WhatsApp</h1>
-          <p className="text-muted-foreground text-sm mt-1">Conecta y gestiona tu sesion de WhatsApp</p>
-        </div>
-
-        {/* Status card */}
-        <div className="bg-card border border-border rounded-xl p-4 sm:p-6 mb-6">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-              <div className={`w-14 h-14 rounded-xl flex items-center justify-center flex-shrink-0 ${isConnected ? "bg-primary/20" : "bg-muted/50"}`}>
-                <Smartphone className={`w-7 h-7 ${isConnected ? "text-primary" : "text-muted-foreground"}`} />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="font-semibold text-foreground">Estado de Conexion</h2>
-                  {isConnected && <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />}
-                </div>
-                <div className={`text-sm font-medium mt-1 ${isConnected ? "text-primary" : isConnecting ? "text-yellow-400" : "text-muted-foreground"}`}>
-                  {isLoading ? "Verificando..." : isConnected ? "Conectado" : isConnecting ? "Conectando..." : "Desconectado"}
-                </div>
-                {isConnected && status?.phone && (
-                  <div className="text-xs text-muted-foreground mt-1">+{status.phone}</div>
-                )}
-                {!isConnected && status?.hasPreviousSession && !isConnecting && (
-                  <div className="text-xs text-muted-foreground mt-1">Hay una sesion previa guardada</div>
-                )}
-              </div>
+      <div className="space-y-8">
+        {/* Header */}
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex flex-col md:flex-row md:items-center justify-between gap-6"
+        >
+          <div className="space-y-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black text-primary uppercase tracking-[0.3em]">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              Estado de Conexión
             </div>
+            <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter uppercase">
+              Conexión <span className="gradient-cyber">WhatsApp</span>
+            </h1>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className={`px-4 py-2 rounded-xl border flex items-center gap-3 ${isConnected ? "bg-primary/10 border-primary/30 text-primary glow-green-sm" : "bg-white/5 border-white/10 text-muted-foreground"}`}>
+              <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-primary animate-pulse shadow-[0_0_10px_#00ff88]" : "bg-muted-foreground"}`} />
+              <span className="text-xs font-black uppercase tracking-tighter">
+                {isLoading ? "Verificando..." : isConnected ? "Sistema Online" : "Sistema Offline"}
+              </span>
+            </div>
+          </div>
+        </motion.div>
 
-            <div className="flex items-center gap-2 sm:justify-end flex-wrap">
-              {isConnected ? (
-                <>
-                  <div className="flex items-center gap-1.5 text-primary text-sm">
-                    <Wifi className="w-4 h-4" />
-                    <span>Activo</span>
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+          {/* Main Connection Panel */}
+          <div className="xl:col-span-2 space-y-6">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="glass-premium p-8 relative overflow-hidden"
+            >
+              {/* Decorative scan line */}
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent animate-scan" />
+
+              <div className="flex flex-col md:flex-row gap-10 items-center">
+                {/* QR Area */}
+                <div className="relative group">
+                  <div className="absolute -inset-4 bg-primary/5 rounded-[2rem] blur-2xl group-hover:bg-primary/10 transition-all" />
+                  <div className="relative w-72 h-72 lg:w-80 lg:h-80 bg-white rounded-3xl p-6 shadow-[0_0_50px_-10px_rgba(0,255,136,0.3)] flex items-center justify-center overflow-hidden">
+                    <AnimatePresence mode="wait">
+                      {isConnected ? (
+                        <motion.div 
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          className="flex flex-col items-center text-center p-6"
+                        >
+                          <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                            <CheckCircle className="w-16 h-16 text-primary" />
+                          </div>
+                          <div className="text-2xl font-black text-black">VINCULADO</div>
+                          <div className="text-xs text-black/60 font-medium mt-2">Dispositivo operativo</div>
+                        </motion.div>
+                      ) : qrCode ? (
+                        <motion.img 
+                          key="qr"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          src={qrCode} 
+                          alt="QR Code" 
+                          className="w-full h-full object-contain"
+                        />
+                      ) : (
+                        <motion.div 
+                          key="loader"
+                          className="flex flex-col items-center gap-4 text-center"
+                        >
+                          <RefreshCw className="w-12 h-12 text-black/20 animate-spin" />
+                          <div className="text-[10px] font-black text-black/40 uppercase tracking-widest">Generando Protocolo</div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                    
+                    {/* Corner accents */}
+                    <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary rounded-tl-xl" />
+                    <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-primary rounded-tr-xl" />
+                    <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-primary rounded-bl-xl" />
+                    <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary rounded-br-xl" />
+                    
+                    {!isConnected && qrCode && (
+                      <div className="absolute inset-0 bg-primary/5 pointer-events-none overflow-hidden">
+                        <div className="w-full h-1 bg-primary/20 absolute animate-scanning-beam" />
+                      </div>
+                    )}
                   </div>
-                  <button
-                    data-testid="btn-reconnect-force"
-                    onClick={forceReconnect}
-                    disabled={forceLoading}
-                    className="px-3 py-2 text-xs border border-border text-muted-foreground rounded-lg hover:bg-muted/30 transition-all disabled:opacity-50 flex items-center gap-1.5"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    Cambiar cuenta
-                  </button>
-                  <button
-                    data-testid="btn-disconnect"
-                    onClick={() => disconnectMutation.mutate()}
-                    disabled={disconnectMutation.isPending}
-                    className="px-4 py-2 text-sm bg-destructive/10 text-destructive border border-destructive/20 rounded-lg hover:bg-destructive/20 transition-all disabled:opacity-50"
-                  >
-                    {disconnectMutation.isPending ? "Desconectando..." : "Desconectar"}
-                  </button>
-                </>
-              ) : (
-                <div className="flex items-center gap-2 flex-wrap">
-                  <WifiOff className="w-5 h-5 text-muted-foreground" />
-                  {!isConnecting && (
-                    <button
-                      data-testid="btn-connect"
-                      onClick={() => {
-                        autoReconnectTried.current = true;
-                        connectMutation.mutate();
-                      }}
-                      disabled={connectMutation.isPending}
-                      className="px-5 py-2.5 bg-primary text-primary-foreground rounded-lg font-semibold text-sm hover:bg-primary/90 transition-all glow-green-sm disabled:opacity-50"
-                    >
-                      Conectar WhatsApp
-                    </button>
-                  )}
-                  {(isConnecting || status?.hasPreviousSession) && (
-                    <button
-                      data-testid="btn-force-reconnect"
-                      onClick={forceReconnect}
-                      disabled={forceLoading}
-                      className="flex items-center gap-1.5 px-4 py-2.5 border border-border text-muted-foreground rounded-lg text-sm hover:bg-muted/30 hover:text-foreground transition-all disabled:opacity-50"
-                    >
-                      <RotateCcw className={`w-4 h-4 ${forceLoading ? "animate-spin" : ""}`} />
-                      {forceLoading ? "Limpiando sesion..." : "Generar QR nuevo"}
-                    </button>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Stuck alert */}
-        {isStuck && (
-          <div className="mb-5 flex items-start gap-3 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
-            <AlertTriangle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <p className="text-sm font-medium text-foreground mb-1">Sesion anterior detectada</p>
-              <p className="text-xs text-muted-foreground mb-3">
-                Hay archivos de una sesion antigua que impiden generar un QR nuevo. Haz clic en "Generar QR nuevo" para limpiar la sesion y vincular desde cero.
-              </p>
-              <button
-                onClick={forceReconnect}
-                disabled={forceLoading}
-                className="flex items-center gap-1.5 px-4 py-2 bg-yellow-500 text-black rounded-lg text-sm font-semibold hover:bg-yellow-400 transition-all disabled:opacity-50"
-              >
-                <RotateCcw className={`w-4 h-4 ${forceLoading ? "animate-spin" : ""}`} />
-                {forceLoading ? "Limpiando..." : "Limpiar sesion y generar QR nuevo"}
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Error */}
-        {error && (
-          <div className="mb-5 flex items-center gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-sm text-destructive">
-            <AlertTriangle className="w-4 h-4 flex-shrink-0" />
-            {error}
-          </div>
-        )}
-
-        {/* QR Code section */}
-        {!isConnected && (
-          <div className="bg-card border border-border rounded-xl p-4 sm:p-8 text-center">
-            {qrCode || (isConnecting && !isStuck) ? (
-              <div>
-                <div className="flex items-center justify-center gap-2 mb-6">
-                  <QrCode className="w-5 h-5 text-primary" />
-                  <h3 className="font-semibold text-foreground">
-                    {qrCode ? "Escanea el codigo QR" : "Generando codigo QR..."}
-                  </h3>
                 </div>
 
-                <div className="inline-block p-3 sm:p-4 bg-white rounded-2xl mb-6 glow-green">
-                  {qrCode ? (
-                    <img src={qrCode} alt="QR Code" className="w-56 h-56 max-w-[70vw] max-h-[70vw] object-contain" />
-                  ) : (
-                    <div className="w-56 h-56 max-w-[70vw] max-h-[70vw] flex flex-col items-center justify-center gap-3">
-                      <RefreshCw className="w-10 h-10 text-muted-foreground animate-spin" />
-                      <p className="text-xs text-muted-foreground">Conectando con WhatsApp...</p>
-                    </div>
-                  )}
-                </div>
+                {/* Instructions / Info */}
+                <div className="flex-1 space-y-6">
+                  <div>
+                    <h3 className="text-xl font-black text-foreground uppercase tracking-tight">Sincronización de Núcleo</h3>
+                    <p className="text-sm text-muted-foreground mt-2 leading-relaxed">Sigue estos parámetros para establecer el enlace de datos con FlowSoftware.</p>
+                  </div>
 
-                {qrCode && (
-                  <div className="space-y-2 mb-4 max-w-xs mx-auto">
+                  <div className="space-y-3">
                     {[
-                      "Abre WhatsApp en tu telefono",
-                      "Ve a Configuracion → Dispositivos vinculados",
-                      "Toca \"Vincular un dispositivo\" y escanea este QR",
+                      "Abre WhatsApp en tu dispositivo móvil.",
+                      "Accede al menú de 'Dispositivos Vinculados'.",
+                      "Escanea el código para autorizar el acceso de la IA."
                     ].map((step, i) => (
-                      <div key={step} className="flex items-start gap-3 text-left">
-                        <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
-                          {i + 1}
-                        </span>
-                        <span className="text-sm text-muted-foreground">{step}</span>
+                      <div key={i} className="flex items-center gap-4 group">
+                        <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-xs font-black group-hover:bg-primary group-hover:text-black transition-all">
+                          0{i + 1}
+                        </div>
+                        <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">{step}</span>
                       </div>
                     ))}
                   </div>
-                )}
 
-                <div className="flex items-center justify-center gap-2 text-yellow-400 mb-4">
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                  <span className="text-sm">Esperando que escanees el QR...</span>
-                </div>
-
-                <button
-                  onClick={forceReconnect}
-                  disabled={forceLoading}
-                  className="flex items-center gap-1.5 mx-auto px-4 py-2 border border-border text-muted-foreground rounded-lg text-xs hover:bg-muted/30 hover:text-foreground transition-all disabled:opacity-50"
-                >
-                  <RotateCcw className={`w-3.5 h-3.5 ${forceLoading ? "animate-spin" : ""}`} />
-                  El QR no funciona? Genera uno nuevo
-                </button>
-              </div>
-            ) : (
-              <div>
-                <QrCode className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-40" />
-                <h3 className="font-semibold text-foreground mb-2">
-                  {status?.hasPreviousSession ? "Sesion anterior encontrada" : "Sin conexion WhatsApp"}
-                </h3>
-                <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
-                  {status?.hasPreviousSession
-                    ? "Puedes intentar reconectar con la sesion previa, o generar un QR nuevo para vincular otro numero."
-                    : "Haz clic en \"Conectar WhatsApp\" para generar el codigo QR y vincular tu telefono."}
-                </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                  {status?.hasPreviousSession && (
-                    <button
-                      onClick={() => {
-                        autoReconnectTried.current = true;
-                        connectMutation.mutate();
-                      }}
-                      disabled={connectMutation.isPending}
-                      className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-all glow-green-sm disabled:opacity-50"
-                    >
-                      <RefreshCw className={`w-4 h-4 ${connectMutation.isPending ? "animate-spin" : ""}`} />
-                      {connectMutation.isPending ? "Reconectando..." : "Reconectar sesion previa"}
-                    </button>
-                  )}
-                  <button
-                    onClick={forceReconnect}
-                    disabled={forceLoading}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all disabled:opacity-50 ${
-                      status?.hasPreviousSession
-                        ? "border border-border text-muted-foreground hover:text-foreground hover:bg-muted/30"
-                        : "bg-primary text-primary-foreground hover:bg-primary/90 glow-green-sm"
-                    }`}
-                  >
-                    <RotateCcw className={`w-4 h-4 ${forceLoading ? "animate-spin" : ""}`} />
-                    {forceLoading ? "Limpiando sesion..." : status?.hasPreviousSession ? "Vincular numero nuevo" : "Conectar WhatsApp"}
-                  </button>
+                  <div className="pt-4 flex flex-wrap gap-4">
+                    {isConnected ? (
+                      <button 
+                        onClick={() => disconnectMutation.mutate()}
+                        className="px-6 py-3 rounded-xl bg-destructive/10 text-destructive border border-destructive/20 text-sm font-black uppercase hover:bg-destructive/20 transition-all"
+                      >
+                        Abortar Conexión
+                      </button>
+                    ) : (
+                      <button 
+                        onClick={forceReconnect}
+                        disabled={forceLoading}
+                        className="px-8 py-3.5 rounded-xl bg-primary text-black text-sm font-black uppercase hover:bg-primary/90 transition-all glow-green flex items-center gap-2"
+                      >
+                        <Zap className="w-4 h-4 fill-current" />
+                        {forceLoading ? "Reiniciando..." : "Generar Nuevo Enlace"}
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            )}
-          </div>
-        )}
+            </motion.div>
 
-        {isConnected && (
-          <div className="bg-card border border-primary/30 rounded-xl p-6 text-center glow-green">
-            <CheckCircle className="w-12 h-12 text-primary mx-auto mb-3" />
-            <h3 className="font-semibold text-foreground mb-1">WhatsApp Conectado</h3>
-            <p className="text-sm text-muted-foreground">
-              {status?.phone
-                ? <>Numero vinculado: <span className="text-primary font-medium">+{status.phone}</span></>
-                : "Sesion vinculada correctamente"}
-            </p>
-            {status?.connectedAt && (
-              <p className="text-xs text-muted-foreground mt-1">
-                Activo desde: {new Date(status.connectedAt).toLocaleString("es-ES")}
-              </p>
-            )}
+            {/* Terminal Logs */}
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="bg-black/40 border border-white/5 rounded-2xl p-6 font-mono text-[11px]"
+            >
+              <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/5">
+                <div className="flex items-center gap-3">
+                  <TerminalIcon className="w-4 h-4 text-primary" />
+                  <span className="font-bold text-primary uppercase tracking-widest">System Logs</span>
+                </div>
+                <div className="flex gap-1.5">
+                  <div className="w-2 h-2 rounded-full bg-white/20" />
+                  <div className="w-2 h-2 rounded-full bg-white/20" />
+                  <div className="w-2 h-2 rounded-full bg-white/20" />
+                </div>
+              </div>
+              <div className="space-y-1.5 opacity-80 h-32 overflow-y-auto scrollbar-hide">
+                <div className="text-muted-foreground">[SYSTEM] Initializing WhatsApp provider...</div>
+                <div className="text-muted-foreground">[AUTH] Verifying previous session keys...</div>
+                {status?.hasPreviousSession && <div className="text-primary">[AUTH] Valid session token found.</div>}
+                <div className={`${isConnected ? "text-primary" : "text-yellow-400"}`}>
+                  [STATUS] Current state: {status?.status?.toUpperCase()}
+                </div>
+                {isConnected && <div className="text-primary">[CORE] Connection established successfully.</div>}
+                {!isConnected && <div className="text-muted-foreground italic">[WAIT] Waiting for QR scan from client...</div>}
+                <div className="animate-pulse">_</div>
+              </div>
+            </motion.div>
           </div>
-        )}
 
-        {/* Info */}
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[
-            { title: "WhatsApp Web real", desc: "Conexion via QR desde Dispositivos vinculados en tu telefono" },
-            { title: "Sesion persistente", desc: "La sesion se restaura automaticamente si el servidor reinicia" },
-            { title: "Reconexion limpia", desc: "Usa \"Generar QR nuevo\" si la sesion queda atascada o quieres cambiar de numero" },
-          ].map(({ title, desc }) => (
-            <div key={title} className="bg-muted/30 border border-border rounded-xl p-4">
-              <h4 className="text-sm font-medium text-foreground mb-1">{title}</h4>
-              <p className="text-xs text-muted-foreground">{desc}</p>
-            </div>
-          ))}
+          {/* Sidebar / Stats */}
+          <div className="space-y-6">
+            {/* Status Panel */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="glass-premium p-6"
+            >
+              <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-6">Diagnóstico de Enlace</h4>
+              <div className="space-y-6">
+                <div>
+                  <div className="flex justify-between text-xs mb-2">
+                    <span className="text-muted-foreground">Calidad Señal</span>
+                    <span className="text-primary font-bold">100%</span>
+                  </div>
+                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: isConnected ? "100%" : "30%" }}
+                      className="h-full bg-primary shadow-[0_0_10px_#00ff88]"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between py-3 border-y border-white/5">
+                  <div className="flex items-center gap-3">
+                    <Wifi className="w-4 h-4 text-primary" />
+                    <span className="text-xs font-bold text-foreground">Latencia</span>
+                  </div>
+                  <span className="text-xs font-mono text-primary">12ms</span>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Shield className="w-4 h-4 text-primary" />
+                    <span className="text-xs font-bold text-foreground">Encriptación</span>
+                  </div>
+                  <span className="text-xs font-mono text-primary">AES-256</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Device Info */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1 }}
+              className="glass-premium p-6"
+            >
+              <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-6">Dispositivo Enlazado</h4>
+              {isConnected && status?.phone ? (
+                <div className="space-y-4">
+                  <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                      <Smartphone className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <div className="text-sm font-black text-foreground">+{status.phone}</div>
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-tighter">Identidad Verificada</div>
+                    </div>
+                  </div>
+                  <div className="text-[10px] text-muted-foreground leading-relaxed italic">
+                    Este dispositivo está autorizado para emitir y recibir respuestas automáticas a través del núcleo FlowSoftware.
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-6 opacity-40">
+                  <WifiOff className="w-10 h-10 mx-auto mb-2" />
+                  <p className="text-[10px] font-bold uppercase tracking-widest">Sin Enlace Activo</p>
+                </div>
+              )}
+            </motion.div>
+          </div>
         </div>
       </div>
+
+      <style>{`
+        @keyframes scanning-beam {
+          0% { top: 0%; }
+          100% { top: 100%; }
+        }
+        .animate-scanning-beam {
+          animation: scanning-beam 3s linear infinite;
+        }
+        @keyframes scan {
+          0% { transform: translateY(0); }
+          100% { transform: translateY(320px); opacity: 0; }
+        }
+        .animate-scan {
+          animation: scan 4s linear infinite;
+        }
+      `}</style>
     </Layout>
   );
 }

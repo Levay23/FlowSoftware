@@ -73,6 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       logout();
     }
+    return () => {};
   }, [token]);
 
   return (

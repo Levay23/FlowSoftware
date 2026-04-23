@@ -19,6 +19,6 @@ router.use(chatbotRouter);
 router.use(whatsappRouter);
 router.use(trainingRouter);
 router.use(conversationsRouter);
-router.use(adminRouter);
+router.use("/admin", adminRouter);
 
 export default router;

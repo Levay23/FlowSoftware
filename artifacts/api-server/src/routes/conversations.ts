@@ -119,12 +119,12 @@ router.post("/conversations/:contactId/messages", authenticateToken, async (req:
     const context = trainingDocs.map(d => d.content).join("\n\n");
     const contentLower = content.toLowerCase();
     const hasMatch = context && trainingDocs.some(d => {
-      const words = contentLower.split(/\s+/).filter(w => w.length > 3);
-      return words.some(w => d.content.toLowerCase().includes(w));
+      const words = contentLower.split(/\s+/).filter((w: string) => w.length > 3);
+      return words.some((w: string) => d.content.toLowerCase().includes(w));
     });
 
     const botReply = hasMatch
-      ? `Basado en nuestra información: ${trainingDocs.find(d => d.content.toLowerCase().includes(contentLower.split(/\s+/).find(w => w.length > 3 && d.content.toLowerCase().includes(w)) || ""))?.content.substring(0, 150) || chatbotConfig.fallbackMessage}`
+      ? `Basado en nuestra información: ${trainingDocs.find(d => d.content.toLowerCase().includes(contentLower.split(/\s+/).find((w: string) => w.length > 3 && d.content.toLowerCase().includes(w)) || ""))?.content.substring(0, 150) || chatbotConfig.fallbackMessage}`
       : chatbotConfig.fallbackMessage;
 
     setTimeout(async () => {

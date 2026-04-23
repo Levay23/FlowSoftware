@@ -17,11 +17,14 @@ export default function Login() {
   const loginMutation = useLogin({
     mutation: {
       onSuccess: (data) => {
+        console.log("Login success!", data);
         login(data.token, data.user);
         setLocation("/dashboard");
       },
-      onError: () => {
-        setError("Credenciales incorrectas. Intenta de nuevo.");
+      onError: (err: any) => {
+        console.error("Login error:", err);
+        const msg = err?.data?.error || err?.message || "No se pudo conectar con el servidor.";
+        setError(msg);
       },
     },
   });
@@ -37,8 +40,9 @@ export default function Login() {
     setError("");
 
     try {
-      const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-      const response = await fetch(`${base}/api/auth/demo`, { method: "POST" });
+      const apiBase = import.meta.env.VITE_API_URL || import.meta.env.BASE_URL.replace(/\/$/, "");
+      console.log("Starting demo session via:", apiBase);
+      const response = await fetch(`${apiBase}/api/auth/demo`, { method: "POST" });
       const data = await response.json();
 
       if (!response.ok) {

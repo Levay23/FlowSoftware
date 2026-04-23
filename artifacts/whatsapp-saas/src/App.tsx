@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { setBaseUrl, setAuthTokenGetter } from "@workspace/api-client-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/Landing";
 import Login from "@/pages/Login";
@@ -42,13 +42,19 @@ function ApiSetup() {
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    setChecked(true);
+  }, []);
+
+  useEffect(() => {
+    if (checked && !isAuthenticated) {
       setLocation("/login");
     }
-  }, [isAuthenticated, setLocation]);
+  }, [checked, isAuthenticated, setLocation]);
 
+  if (!checked) return null;
   if (!isAuthenticated) return null;
   return <Component />;
 }

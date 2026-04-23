@@ -39,7 +39,7 @@ export default function AdminUsers() {
   const deleteUserMutation = useAdminDeleteUser();
 
   useEffect(() => {
-    if (user && user.role !== "admin") {
+    if (user && user.role !== "admin" && user.role !== "moderator") {
       setLocation("/dashboard");
     }
   }, [user, setLocation]);
@@ -186,50 +186,54 @@ export default function AdminUsers() {
 
               <form onSubmit={handleCreateUser} className="space-y-5">
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Alias Identidad</label>
+                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nombre Completo</label>
                   <input
                     value={name}
                     onChange={(event) => setName(event.target.value)}
                     className="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary/50 transition-all font-mono"
-                    placeholder="Nombre o ID"
+                    placeholder="Ej: Juan Perez"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Enlace de Red (Email)</label>
+                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Correo Electrónico</label>
                   <input
                     type="email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
                     className="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary/50 transition-all font-mono"
-                    placeholder="email@flow.net"
+                    placeholder="usuario@flowsoftware.app"
                     required
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Cipher Inicial (Pass)</label>
+                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Contraseña Inicial</label>
                   <input
                     type="text"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
                     className="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary/50 transition-all font-mono"
-                    placeholder="Autogenerado si vacío"
+                    placeholder="Dejar vacío para aleatoria"
                   />
                 </div>
 
-                <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nivel de Acceso</label>
                   <select
                     value={role}
                     onChange={(event) => setRole(event.target.value)}
-                    className="w-full bg-white/5 border border-white/5 rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary/50 transition-all uppercase font-black tracking-tighter"
+                    className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:border-primary/50 transition-all uppercase font-black tracking-tighter appearance-none"
+                    style={{ backgroundColor: '#0c0c0c' }}
                   >
-                    <option value="user">Privilegios Cliente</option>
-                    <option value="admin">Root / Administrador</option>
+                    <option value="user" style={{ backgroundColor: '#0c0c0c' }}>Usuario Estándar</option>
+                    {user?.role === "admin" && (
+                      <>
+                        <option value="moderator" style={{ backgroundColor: '#0c0c0c' }}>Moderador</option>
+                        <option value="admin" style={{ backgroundColor: '#0c0c0c' }}>Administrador</option>
+                      </>
+                    )}
                   </select>
-                </div>
 
 
                 <button
@@ -251,12 +255,17 @@ export default function AdminUsers() {
                   >
                     <div className="text-[10px] font-black text-primary uppercase tracking-widest mb-3 flex items-center gap-2">
                       <Key className="w-3.5 h-3.5" />
-                      Protocolo Completado
+                      Usuario Creado Exitosamente
                     </div>
+                    {user?.role === "moderator" && (
+                      <p className="text-[9px] text-yellow-500 font-bold uppercase mb-3">Pendiente de aprobación por el administrador</p>
+                    )}
                     <div className="space-y-2 text-[11px] font-mono text-foreground opacity-80">
-                      <div>ID: {createdAccount.name}</div>
-                      <div>RED: {createdAccount.email}</div>
-                      <div className="text-primary font-black bg-primary/10 px-2 py-1 rounded-lg inline-block">PASS: {createdAccount.password}</div>
+                      <div>NOMBRE: {createdAccount.name}</div>
+                      <div>EMAIL: {createdAccount.email}</div>
+                      {createdAccount.password && (
+                        <div className="text-primary font-black bg-primary/10 px-2 py-1 rounded-lg inline-block">PASS: {createdAccount.password}</div>
+                      )}
                     </div>
                     <button
                       type="button"
@@ -264,7 +273,7 @@ export default function AdminUsers() {
                       className="mt-4 flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-primary/30 text-[10px] font-black uppercase text-primary hover:bg-primary/10 transition-all"
                     >
                       <Copy className="w-3.5 h-3.5" />
-                      Copiar Transmisión
+                      Copiar Credenciales
                     </button>
                   </motion.div>
                 )}
@@ -291,7 +300,7 @@ export default function AdminUsers() {
               <table className="w-full text-sm border-collapse">
                 <thead>
                   <tr className="border-b border-white/5 text-left">
-                    <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Identidad</th>
+                    <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Nombre</th>
                     <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Acceso</th>
                     <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Estado</th>
                     <th className="px-8 py-6 text-right text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Acciones</th>
@@ -321,25 +330,47 @@ export default function AdminUsers() {
                             </div>
                           </td>
                           <td className="px-8 py-5">
-                            <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border ${account.role === "admin" ? "bg-destructive/10 border-destructive/30 text-destructive" : "bg-primary/10 border-primary/30 text-primary"}`}>
-                              {account.role === "admin" ? "ROOT" : "NODE"}
+                            <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border ${
+                              account.role === "admin" ? "bg-destructive/10 border-destructive/30 text-destructive" : 
+                              account.role === "moderator" ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-500" :
+                              "bg-primary/10 border-primary/30 text-primary"
+                            }`}>
+                              {account.role === "admin" ? "ADMIN" : account.role === "moderator" ? "MOD" : "USER"}
                             </span>
                           </td>
                           <td className="px-8 py-5">
                             <div className="flex items-center gap-2">
-                              <div className={`w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor] ${account.status === "active" ? "bg-primary text-primary" : "bg-destructive text-destructive"}`} />
-                              <span className={`text-[9px] font-black uppercase tracking-widest ${account.status === "active" ? "text-primary" : "text-destructive"}`}>
-                                {account.status === "active" ? "Activo" : "Gélido"}
+                              <div className={`w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor] ${
+                                account.status === "active" ? "bg-primary text-primary" : 
+                                account.status === "pending_approval" ? "bg-yellow-500 text-yellow-500" :
+                                "bg-destructive text-destructive"
+                              }`} />
+                              <span className={`text-[9px] font-black uppercase tracking-widest ${
+                                account.status === "active" ? "text-primary" : 
+                                account.status === "pending_approval" ? "text-yellow-500" :
+                                "text-destructive"
+                              }`}>
+                                {account.status === "active" ? "Activo" : account.status === "pending_approval" ? "Solicitud" : "Suspendido"}
                               </span>
                             </div>
                           </td>
                           <td className="px-8 py-5 text-right">
                             <div className="flex items-center justify-end gap-2">
+                              {user?.role === "admin" && account.status === "pending_approval" && (
+                                <button
+                                  onClick={() => updateUserMutation.mutate({ id: account.id, data: { status: 'active' } }, { onSuccess: () => refetch() })}
+                                  className="w-9 h-9 flex items-center justify-center rounded-xl bg-primary text-black hover:bg-primary/90 transition-all"
+                                  title="Aprobar Usuario"
+                                >
+                                  <ShieldCheck className="w-4 h-4" />
+                                </button>
+                              )}
                               <button
                                 onClick={() => handleToggleStatus(account)}
-                                className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all ${account.status === 'active' ? 'border-white/5 text-muted-foreground hover:text-destructive' : 'bg-primary border-primary text-black'}`}
+                                disabled={user?.role === "moderator"}
+                                className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all ${account.status === 'active' ? 'border-white/5 text-muted-foreground hover:text-destructive' : 'bg-primary border-primary text-black'} disabled:opacity-30`}
                               >
-                                {account.status === 'active' ? <Snowflake className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
+                                {account.status === 'active' ? < Snowflake className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
                               </button>
                               <button
                                 onClick={() => startEdit(account)}
@@ -349,7 +380,7 @@ export default function AdminUsers() {
                               </button>
                               <button
                                 onClick={() => handleDeleteUser(account.id)}
-                                disabled={account.email === "admin@flowsoftware.app"}
+                                disabled={account.email === "admin@flowsoftware.app" || user?.role === "moderator"}
                                 className="w-9 h-9 flex items-center justify-center rounded-xl border border-white/5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all disabled:opacity-0"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -402,7 +433,7 @@ export default function AdminUsers() {
               <form onSubmit={handleUpdateUser} className="space-y-6">
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Alias Identidad</label>
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nombre Completo</label>
                     <input
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
@@ -411,7 +442,7 @@ export default function AdminUsers() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Enlace de Red</label>
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Correo Electrónico</label>
                     <input
                       type="email"
                       value={editEmail}
@@ -423,32 +454,36 @@ export default function AdminUsers() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-2">
                     <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nivel Privilegio</label>
                     <select
                       value={editRole}
                       onChange={(e) => setEditRole(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-foreground focus:outline-none focus:border-primary/50 uppercase font-black tracking-widest"
+                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs text-foreground focus:outline-none focus:border-primary/50 uppercase font-black tracking-widest"
+                      style={{ backgroundColor: '#0c0c0c' }}
+                      disabled={user?.role === "moderator"}
                     >
-                      <option value="user">Nodo / Cliente</option>
-                      <option value="admin">Root / Admin</option>
+                      <option value="user" style={{ backgroundColor: '#0c0c0c' }}>Usuario Estándar</option>
+                      <option value="moderator" style={{ backgroundColor: '#0c0c0c' }}>Moderador</option>
+                      <option value="admin" style={{ backgroundColor: '#0c0c0c' }}>Administrador</option>
                     </select>
-                  </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Estado de Nodo</label>
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Estado de Cuenta</label>
                     <select
                       value={editStatus}
                       onChange={(e) => setEditStatus(e.target.value)}
-                      className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-foreground focus:outline-none focus:border-primary/50 uppercase font-black tracking-widest"
+                      className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs text-foreground focus:outline-none focus:border-primary/50 uppercase font-black tracking-widest"
+                      style={{ backgroundColor: '#0c0c0c' }}
+                      disabled={user?.role === "moderator"}
                     >
-                      <option value="active">Activo</option>
-                      <option value="suspended">Gélido (Suspendido)</option>
+                      <option value="active" style={{ backgroundColor: '#0c0c0c' }}>Activo</option>
+                      <option value="pending_approval" style={{ backgroundColor: '#0c0c0c' }}>Pendiente de Aprobación</option>
+                      <option value="suspended" style={{ backgroundColor: '#0c0c0c' }}>Suspendido</option>
                     </select>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Reescribir Contrasena (Opcional)</label>
+                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Cambiar Contraseña (Opcional)</label>
                   <input
                     type="text"
                     value={editPassword}
@@ -464,7 +499,7 @@ export default function AdminUsers() {
                     onClick={() => setEditingUser(null)}
                     className="flex-1 py-4 glass border-white/5 rounded-2xl text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:bg-white/5 transition-all"
                   >
-                    Abortar
+                    Cancelar
                   </button>
                   <button
                     type="submit"

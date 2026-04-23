@@ -189,10 +189,10 @@ export default function Training() {
   };
 
   const tabs: { key: Tab; label: string; icon: typeof Brain }[] = [
-    { key: "nicho", label: "Módulos de Nicho", icon: Tag },
-    { key: "qa", label: "Neural Pairs (Q&A)", icon: MessageSquareQuote },
-    { key: "analyzer", label: "Analizador Cuántico", icon: Sparkles },
-    { key: "docs", label: "Bóveda de Datos", icon: BookOpen },
+    { key: "nicho", label: "Sectores de Negocio", icon: Tag },
+    { key: "qa", label: "Preguntas y Respuestas", icon: MessageSquareQuote },
+    { key: "analyzer", label: "Analizador de Datos", icon: Sparkles },
+    { key: "docs", label: "Biblioteca de Documentos", icon: BookOpen },
   ];
 
   return (
@@ -210,7 +210,7 @@ export default function Training() {
               Base de Conocimiento
             </div>
             <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter uppercase">
-              Centro de <span className="gradient-cyber">Entrenamiento</span>
+              Base de <span className="gradient-cyber">Conocimiento</span>
             </h1>
             <p className="text-muted-foreground text-sm uppercase tracking-widest opacity-60">Gestiona la información que utiliza tu asistente.</p>
           </div>
@@ -262,8 +262,8 @@ export default function Training() {
                     <Tag className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <h2 className="text-sm font-black text-foreground uppercase tracking-tight">Selección de Módulo</h2>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Optimiza la IA para tu sector específico</p>
+                    <h2 className="text-xl font-black text-foreground uppercase tracking-tight">Selección de Sector</h2>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Optimiza tu asistente para tu sector específico</p>
                   </div>
                 </div>
 
@@ -327,7 +327,7 @@ export default function Training() {
                               rows={5}
                               value={nicheSections[section] ?? ""}
                               onChange={e => handleNicheSection(section, e.target.value)}
-                              placeholder={`Ingresa los parámetros de ${section.toLowerCase()}...`}
+                              placeholder={`Ingresa los detalles de ${section.toLowerCase()}...`}
                               className="w-full bg-black/40 border border-white/5 rounded-xl p-5 text-sm text-foreground focus:outline-none focus:border-primary/50 transition-all resize-none scrollbar-hide font-mono"
                             />
                           </motion.div>
@@ -344,12 +344,12 @@ export default function Training() {
                     className="flex items-center gap-3 px-8 py-4 bg-primary text-black rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-primary/90 transition-all glow-green disabled:opacity-50"
                   >
                     {savingNiche ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                    Integrar a la Bóveda
+                    Guardar en Biblioteca
                   </button>
                   {nicheSaved && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-center gap-2 text-primary text-[11px] font-bold uppercase tracking-widest">
                       <CheckCircle className="w-4 h-4" />
-                      Protocolo Exitoso
+                      Guardado Exitoso
                     </motion.div>
                   )}
                 </div>
@@ -372,13 +372,13 @@ export default function Training() {
                     <MessageSquareQuote className="w-5 h-5 text-purple-400" />
                   </div>
                   <div>
-                    <h2 className="text-sm font-black text-foreground uppercase tracking-tight">Neural Linkage</h2>
+                    <h2 className="text-sm font-black text-foreground uppercase tracking-tight">Asociación de Respuestas</h2>
                     <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Vincula preguntas de usuario con respuestas lógicas</p>
                   </div>
                 </div>
 
                 <div className="mb-8 max-w-lg">
-                  <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">Namespace del Documento</label>
+                  <label className="block text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-2">Nombre del Documento</label>
                   <input
                     type="text"
                     value={qaName}
@@ -399,7 +399,7 @@ export default function Training() {
                     >
                       <div className="flex items-center justify-between mb-6">
                         <span className="text-[10px] font-black text-primary bg-primary/10 px-3 py-1 rounded-full uppercase tracking-widest">
-                          Neural Pair #{i + 1}
+                          Par #{i + 1}
                         </span>
                         {qaPairs.length > 1 && (
                           <button
@@ -412,7 +412,7 @@ export default function Training() {
                       </div>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 ml-1">Impulso (Pregunta)</label>
+                          <label className="block text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 ml-1">Pregunta</label>
                           <input
                             type="text"
                             value={pair.question}
@@ -421,7 +421,7 @@ export default function Training() {
                           />
                         </div>
                         <div>
-                          <label className="block text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 ml-1">Respuesta (Output)</label>
+                          <label className="block text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1.5 ml-1">Respuesta</label>
                           <textarea
                             rows={3}
                             value={pair.answer}
@@ -440,7 +440,7 @@ export default function Training() {
                     className="border-2 border-dashed border-white/5 rounded-2xl flex flex-col items-center justify-center p-8 text-muted-foreground hover:border-primary/30 hover:text-primary hover:bg-primary/5 transition-all group"
                   >
                     <Plus className="w-8 h-8 mb-2 group-hover:rotate-90 transition-transform duration-500" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Añadir Par Neuronal</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest">Añadir Par de Q&A</span>
                   </motion.button>
                 </div>
 
@@ -451,7 +451,7 @@ export default function Training() {
                     className="px-8 py-4 bg-primary text-black rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-primary/90 transition-all glow-green disabled:opacity-50"
                   >
                     {savingQA ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                    Sincronizar Q&A ({qaPairs.filter(p => p.question.trim() && p.answer.trim()).length} pares)
+                    Guardar Q&A ({qaPairs.filter(p => p.question.trim() && p.answer.trim()).length} pares)
                   </button>
                 </div>
               </div>
@@ -477,7 +477,7 @@ export default function Training() {
                     <Sparkles className="w-7 h-7 text-cyan-400 animate-pulse" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-black text-foreground uppercase tracking-tight">Analizador Cuántico IA</h2>
+                    <h2 className="text-xl font-black text-foreground uppercase tracking-tight">Analizador de Datos Inteligente</h2>
                     <p className="text-xs text-muted-foreground mt-1 max-w-xl">
                       Inyecta datos en bruto. Nuestra red neuronal los filtrará, estructurará y organizará automáticamente en módulos de conocimiento.
                     </p>
@@ -527,7 +527,7 @@ export default function Training() {
                     if (file) handleAnalyzerFile(file);
                   }} />
                   <Upload className={`w-10 h-10 mx-auto mb-4 transition-transform group-hover:-translate-y-2 ${analyzerDragOver ? "text-primary" : "text-muted-foreground"}`} />
-                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground">Inyectar Archivo de Texto</div>
+                  <div className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground">Subir Archivo de Texto</div>
                   <p className="text-xs text-muted-foreground mt-2 opacity-60">Soporta formatos TXT / RAW</p>
                 </div>
 
@@ -541,7 +541,7 @@ export default function Training() {
                     placeholder="Pega aquí la información desordenada de tu negocio..."
                   />
                   <div className="flex justify-between mt-2 px-2">
-                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Quantum Buffer: 10,000 CHARS</span>
+                    <span className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Capacidad Máxima: 10,000 caracteres</span>
                     <span className={`text-[9px] font-bold uppercase tracking-widest ${analyzerText.length > 9000 ? "text-destructive" : "text-primary"}`}>
                       {analyzerText.length} / 10,000
                     </span>
@@ -580,7 +580,7 @@ export default function Training() {
                         <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
                           <CheckCircle className="w-4 h-4 text-primary" />
                         </div>
-                        <h3 className="text-sm font-black text-foreground uppercase tracking-tight">Matriz Estructurada</h3>
+                        <h3 className="text-sm font-black text-foreground uppercase tracking-tight">Datos Estructurados</h3>
                       </div>
                       <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest opacity-60 italic">Validar antes de guardar</span>
                     </div>
@@ -597,7 +597,7 @@ export default function Training() {
                         className="px-8 py-4 bg-primary text-black rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-primary/90 transition-all glow-green disabled:opacity-50"
                       >
                         {savingAnalyzed ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                        Commit a la Bóveda
+                        Guardar en Biblioteca
                       </button>
                       <button
                         onClick={() => setAnalyzedResult(null)}
@@ -627,7 +627,7 @@ export default function Training() {
                     <Database className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h2 className="text-sm font-black text-foreground uppercase tracking-tight">Bóveda de Conocimiento</h2>
+                    <h2 className="text-sm font-black text-foreground uppercase tracking-tight">Biblioteca de Documentos</h2>
                     <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Base de datos estructurada del bot</p>
                   </div>
                 </div>
@@ -645,8 +645,8 @@ export default function Training() {
               ) : documents.length === 0 ? (
                 <div className="p-20 text-center opacity-30">
                   <FileText className="w-20 h-20 mx-auto mb-6" />
-                  <h3 className="text-xs font-black uppercase tracking-[0.3em]">Bóveda Vacía</h3>
-                  <p className="text-[10px] text-muted-foreground mt-2 uppercase">No se han detectado inyecciones de datos</p>
+                  <h3 className="text-xs font-black uppercase tracking-[0.3em]">Biblioteca Vacía</h3>
+                  <p className="text-[10px] text-muted-foreground mt-2 uppercase">No se han encontrado documentos cargados</p>
                 </div>
               ) : (
                 <div className="divide-y divide-white/5">

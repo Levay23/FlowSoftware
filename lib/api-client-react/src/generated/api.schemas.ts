@@ -28,6 +28,7 @@ export const UserRole = {
   admin: 'admin',
   user: 'user',
   demo: 'demo',
+  moderator: 'moderator',
 } as const;
 
 export type UserStatus = typeof UserStatus[keyof typeof UserStatus];
@@ -36,6 +37,7 @@ export type UserStatus = typeof UserStatus[keyof typeof UserStatus];
 export const UserStatus = {
   active: 'active',
   suspended: 'suspended',
+  pending_approval: 'pending_approval',
 } as const;
 
 export interface User {
@@ -240,6 +242,7 @@ export type AdminCreateUserBodyRole = typeof AdminCreateUserBodyRole[keyof typeo
 export const AdminCreateUserBodyRole = {
   user: 'user',
   admin: 'admin',
+  moderator: 'moderator',
 } as const;
 
 export interface AdminCreateUserBody {
@@ -260,6 +263,7 @@ export type AdminUpdateUserBodyRole = typeof AdminUpdateUserBodyRole[keyof typeo
 export const AdminUpdateUserBodyRole = {
   user: 'user',
   admin: 'admin',
+  moderator: 'moderator',
 } as const;
 
 export type AdminUpdateUserBodyStatus = typeof AdminUpdateUserBodyStatus[keyof typeof AdminUpdateUserBodyStatus];
@@ -268,6 +272,7 @@ export type AdminUpdateUserBodyStatus = typeof AdminUpdateUserBodyStatus[keyof t
 export const AdminUpdateUserBodyStatus = {
   active: 'active',
   suspended: 'suspended',
+  pending_approval: 'pending_approval',
 } as const;
 
 export interface AdminUpdateUserBody {

@@ -63,7 +63,7 @@ export default function Contacts() {
               Gestión de Base de Datos de Clientes
             </div>
             <h1 className="text-4xl font-black text-foreground tracking-tight uppercase">
-              Directorio <span className="gradient-cyber">Cyber</span>
+              Directorio de <span className="gradient-cyber">Contactos</span>
             </h1>
             <p className="text-muted-foreground text-sm mt-1">Administra tus contactos y etiquetas para una segmentación inteligente.</p>
           </div>
@@ -74,8 +74,8 @@ export default function Contacts() {
             onClick={() => setShowAddModal(true)}
             className="flex items-center justify-center gap-3 px-8 py-4 bg-primary text-black rounded-2xl text-xs font-black uppercase tracking-widest transition-all glow-green shadow-[0_0_20px_rgba(0,255,136,0.3)]"
           >
-            <UserPlus className="w-4 h-4" />
-            Vincular Contacto
+            <Plus className="w-4 h-4" />
+            Nuevo Contacto
           </motion.button>
         </motion.div>
 
@@ -89,7 +89,7 @@ export default function Contacts() {
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar por identidad o frecuencia..."
+              placeholder="Buscar por nombre o contacto..."
               className="w-full bg-white/5 border border-white/5 rounded-2xl pl-12 pr-6 py-4 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:bg-white/10 transition-all font-mono"
             />
           </div>
@@ -109,11 +109,11 @@ export default function Contacts() {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="border-b border-white/5 bg-white/2">
-                  <th className="text-left text-[10px] font-black text-muted-foreground px-8 py-6 uppercase tracking-[0.2em]">Entidad</th>
-                  <th className="text-left text-[10px] font-black text-muted-foreground px-8 py-6 uppercase tracking-[0.2em]">Enlace (Teléfono)</th>
-                  <th className="text-left text-[10px] font-black text-muted-foreground px-8 py-6 uppercase tracking-[0.2em]">Frecuencia (Email)</th>
-                  <th className="text-left text-[10px] font-black text-muted-foreground px-8 py-6 uppercase tracking-[0.2em]">Segmentos</th>
-                  <th className="text-right text-[10px] font-black text-muted-foreground px-8 py-6 uppercase tracking-[0.2em]">Protocolos</th>
+                  <th className="text-left text-[10px] font-black text-muted-foreground px-8 py-6 uppercase tracking-[0.2em]">Nombre</th>
+                  <th className="text-left text-[10px] font-black text-muted-foreground px-8 py-6 uppercase tracking-[0.2em]">Teléfono</th>
+                  <th className="text-left text-[10px] font-black text-muted-foreground px-8 py-6 uppercase tracking-[0.2em]">Email</th>
+                  <th className="text-left text-[10px] font-black text-muted-foreground px-8 py-6 uppercase tracking-[0.2em]">Etiquetas</th>
+                  <th className="text-right text-[10px] font-black text-muted-foreground px-8 py-6 uppercase tracking-[0.2em]">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -221,8 +221,8 @@ export default function Contacts() {
                     <User className="w-6 h-6 text-primary" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-black text-foreground uppercase tracking-tight">Vincular Entidad</h2>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Nuevo registro en la red neuronal</p>
+                    <h2 className="text-xl font-black text-foreground uppercase tracking-tight">Nuevo Contacto</h2>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Añadir un nuevo registro al sistema</p>
                   </div>
                 </div>
                 <button onClick={() => setShowAddModal(false)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-white/5 text-muted-foreground hover:text-foreground transition-all border border-white/5">
@@ -233,7 +233,7 @@ export default function Contacts() {
               <form onSubmit={handleCreate} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Alias / Identidad *</label>
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nombre Completo *</label>
                     <input
                       type="text"
                       value={newContact.name}
@@ -243,7 +243,7 @@ export default function Contacts() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Enlace Móvil *</label>
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Teléfono *</label>
                     <input
                       type="text"
                       value={newContact.phone}
@@ -289,7 +289,7 @@ export default function Contacts() {
                     disabled={createMutation.isPending}
                     className="flex-1 py-4 bg-primary text-black rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] hover:bg-primary/90 transition-all glow-green shadow-[0_0_15px_rgba(0,255,136,0.2)] disabled:opacity-50"
                   >
-                    {createMutation.isPending ? "Procesando..." : "Confirmar Enlace"}
+                    {createMutation.isPending ? "Guardando..." : "Guardar Contacto"}
                   </button>
                 </div>
               </form>

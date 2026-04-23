@@ -49,7 +49,7 @@ export default function Dashboard() {
       glow: "hsla(175, 100%, 36%, 0.2)",
     },
     {
-      label: "Bot IA",
+      label: "Asistente Virtual",
       value: stats?.botStatus === "active" ? "Activo" : "Inactivo",
       icon: Bot,
       color: stats?.botStatus === "active" ? "text-primary" : "text-muted-foreground",
@@ -66,10 +66,10 @@ export default function Dashboard() {
           <div className="space-y-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-[10px] font-black text-primary uppercase tracking-[0.3em]">
               <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              Sincronizado
+              Actualizado
             </div>
             <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter uppercase">
-              Resumen <span className="gradient-cyber">General</span>
+              Panel de <span className="gradient-cyber">Control</span>
             </h1>
             <p className="text-muted-foreground text-sm uppercase tracking-widest opacity-60">Visión global de tu operación en WhatsApp.</p>
           </div>
@@ -81,7 +81,7 @@ export default function Dashboard() {
           >
             <div className="text-right">
               <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Estado Global</div>
-              <div className="text-sm font-black text-primary">SISTEMA ONLINE</div>
+              <div className="text-sm font-black text-primary">SISTEMA ACTIVO</div>
             </div>
             <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center glow-green">
               <Activity className="w-6 h-6 text-primary" />

@@ -46,8 +46,8 @@ export async function authenticateToken(req: AuthRequest, res: Response, next: N
 }
 
 export function requireAdmin(req: AuthRequest, res: Response, next: NextFunction): void {
-  if (req.userRole !== "admin") {
-    res.status(403).json({ error: "Administrator access required" });
+  if (req.userRole !== "admin" && req.userRole !== "moderator") {
+    res.status(403).json({ error: "Se requiere acceso de administrador o moderador" });
     return;
   }
 

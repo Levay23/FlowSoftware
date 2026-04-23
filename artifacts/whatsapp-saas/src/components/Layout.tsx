@@ -38,7 +38,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const demoExpiresAt = user?.isDemo && user.demoExpiresAt ? new Date(user.demoExpiresAt) : null;
-  const allNavItems = [...navItems, ...(user?.role === "admin" ? adminNavItems : [])];
+  const allNavItems = [...navItems, ...(user?.role === "admin" || user?.role === "moderator" ? adminNavItems : [])];
 
   const handleLogout = () => {
     setMenuOpen(false);

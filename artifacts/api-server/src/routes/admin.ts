@@ -41,19 +41,22 @@ router.post("/users", authenticateToken, requireAdmin, async (req: AuthRequest, 
     const tempPassword = password || `Flow-${randomUUID().slice(0, 8)}!`;
     const passwordHash = await bcrypt.hash(tempPassword, 10);
 
+    // If moderator, force status to pending_approval
+    const status = req.userRole === "moderator" ? "pending_approval" : "active";
+
     const [user] = await db.insert(usersTable).values({
       name,
       email,
       passwordHash,
       role: role || "user",
-      status: "active"
+      status
     }).returning();
 
-    // Sync with Firebase Auth for security/backup
+    // Sync with Firebase Auth
     try {
       await createFirebaseUser(email, tempPassword, name);
     } catch (fbError) {
-      console.warn("Firebase Sync Warning (non-blocking):", fbError);
+      console.warn("Firebase Sync Warning:", fbError);
     }
 
     res.status(201).json({
@@ -63,14 +66,13 @@ router.post("/users", authenticateToken, requireAdmin, async (req: AuthRequest, 
   } catch (error: any) {
     console.error("Admin Create User Error:", error);
     if (error.code === "23505") {
-      res.status(400).json({ error: "El email ya está registrado" });
+      res.status(400).json({ error: "El correo electrónico ya está registrado" });
     } else {
-      res.status(500).json({ error: "Error al crear cuenta" });
+      res.status(500).json({ error: "Error al crear la cuenta" });
     }
   }
 });
 
-// Handle both Update and Delete under the same path definition
 router.route("/users/:id")
   .all(authenticateToken, requireAdmin)
   .put(async (req: AuthRequest, res): Promise<void> => {
@@ -80,8 +82,18 @@ router.route("/users/:id")
 
       const [existing] = await db.select().from(usersTable).where(eq(usersTable.id, id)).limit(1);
       if (!existing) {
-        res.status(404).json({ error: "User not found" });
+        res.status(404).json({ error: "Usuario no encontrado" });
         return;
+      }
+
+      // Moderator restrictions
+      if (req.userRole === "moderator") {
+        // Moderator can only update their own name/email? 
+        // Actually, let's allow updating name/email of others but NOT role/status
+        if (role || status) {
+          res.status(403).json({ error: "Los moderadores no tienen permiso para cambiar roles o estados" });
+          return;
+        }
       }
 
       const updateData: any = {};
@@ -101,13 +113,16 @@ router.route("/users/:id")
       res.json(serializeUser(updated));
     } catch (error) {
       console.error("Admin Update User Error:", error);
-      res.status(500).json({ error: "Failed to update user" });
+      res.status(500).json({ error: "Error al actualizar el usuario" });
     }
   })
   .delete(async (req: AuthRequest, res): Promise<void> => {
+    if (req.userRole === "moderator") {
+      res.status(403).json({ error: "Los moderadores no pueden eliminar cuentas" });
+      return;
+    }
+
     const targetId = req.params.id;
-    console.log(`[ADMIN_DELETE] Processing request for ID: ${targetId} by admin: ${req.userId}`);
-    
     try {
       const id = parseInt(targetId as string);
       if (isNaN(id)) {
@@ -118,24 +133,20 @@ router.route("/users/:id")
       const [existing] = await db.select().from(usersTable).where(eq(usersTable.id, id)).limit(1);
       
       if (!existing) {
-        console.log(`[ADMIN_DELETE] User ${id} not found in database`);
         res.status(404).json({ error: "Usuario no encontrado" });
         return;
       }
 
-      // Root protection
       if (existing.email === "admin@flowsoftware.app") {
-        console.log(`[ADMIN_DELETE] Blocked deletion of master admin: ${existing.email}`);
-        res.status(403).json({ error: "No se puede eliminar el administrador principal (Master)" });
+        res.status(403).json({ error: "No se puede eliminar el administrador principal" });
         return;
       }
 
       await db.delete(usersTable).where(eq(usersTable.id, id));
-      console.log(`[ADMIN_DELETE] User ${id} (${existing.email}) deleted successfully`);
       res.json({ success: true, message: "Usuario eliminado correctamente" });
     } catch (error) {
-      console.error("Admin Delete User Critical Error:", error);
-      res.status(500).json({ error: "Error interno al intentar eliminar el usuario" });
+      console.error("Admin Delete User Error:", error);
+      res.status(500).json({ error: "Error interno al eliminar el usuario" });
     }
   });
 

@@ -7,7 +7,6 @@
  */
 import * as zod from 'zod';
 
-
 /**
  * Returns server health status
  * @summary Health check
@@ -45,8 +44,8 @@ export const LoginResponse = zod.object({
   "id": zod.number(),
   "email": zod.string(),
   "name": zod.string(),
-  "role": zod.enum(['admin', 'user', 'demo']),
-  "status": zod.enum(['active', 'suspended']),
+  "role": zod.enum(['admin', 'user', 'demo', 'moderator']),
+  "status": zod.enum(['active', 'suspended', 'pending_approval']),
   "createdAt": zod.coerce.date(),
   "isDemo": zod.boolean().optional(),
   "demoExpiresAt": zod.string().nullish()
@@ -61,8 +60,8 @@ export const GetMeResponse = zod.object({
   "id": zod.number(),
   "email": zod.string(),
   "name": zod.string(),
-  "role": zod.enum(['admin', 'user', 'demo']),
-  "status": zod.enum(['active', 'suspended']),
+  "role": zod.enum(['admin', 'user', 'demo', 'moderator']),
+  "status": zod.enum(['active', 'suspended', 'pending_approval']),
   "createdAt": zod.coerce.date(),
   "isDemo": zod.boolean().optional(),
   "demoExpiresAt": zod.string().nullish()
@@ -348,8 +347,8 @@ export const AdminListUsersResponseItem = zod.object({
   "id": zod.number(),
   "email": zod.string(),
   "name": zod.string(),
-  "role": zod.enum(['admin', 'user', 'demo']),
-  "status": zod.enum(['active', 'suspended']),
+  "role": zod.enum(['admin', 'user', 'demo', 'moderator']),
+  "status": zod.enum(['active', 'suspended', 'pending_approval']),
   "createdAt": zod.coerce.date(),
   "isDemo": zod.boolean().optional(),
   "demoExpiresAt": zod.string().nullish()
@@ -364,7 +363,7 @@ export const AdminCreateUserBody = zod.object({
   "email": zod.string(),
   "name": zod.string(),
   "password": zod.string().optional(),
-  "role": zod.enum(['user', 'admin']).optional()
+  "role": zod.enum(['user', 'admin', 'moderator']).optional()
 })
 
 
@@ -378,8 +377,8 @@ export const AdminUpdateUserParams = zod.object({
 export const AdminUpdateUserBody = zod.object({
   "email": zod.string().optional(),
   "name": zod.string().optional(),
-  "role": zod.enum(['user', 'admin']).optional(),
-  "status": zod.enum(['active', 'suspended']).optional(),
+  "role": zod.enum(['user', 'admin', 'moderator']).optional(),
+  "status": zod.enum(['active', 'suspended', 'pending_approval']).optional(),
   "password": zod.string().optional()
 })
 
@@ -387,8 +386,8 @@ export const AdminUpdateUserResponse = zod.object({
   "id": zod.number(),
   "email": zod.string(),
   "name": zod.string(),
-  "role": zod.enum(['admin', 'user', 'demo']),
-  "status": zod.enum(['active', 'suspended']),
+  "role": zod.enum(['admin', 'user', 'demo', 'moderator']),
+  "status": zod.enum(['active', 'suspended', 'pending_approval']),
   "createdAt": zod.coerce.date(),
   "isDemo": zod.boolean().optional(),
   "demoExpiresAt": zod.string().nullish()
@@ -406,5 +405,3 @@ export const AdminDeleteUserResponse = zod.object({
   "success": zod.boolean(),
   "message": zod.string().optional()
 })
-
-

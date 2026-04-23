@@ -106,7 +106,7 @@ export default function Landing() {
 
               <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-[0.95] mb-8 uppercase tracking-tighter">
                 <span className="text-foreground">Escale su </span>
-                <span className="gradient-cyber block">Negocio</span>
+                <span className="gradient-cyber block">Negocio Digital</span>
                 <span className="text-foreground">con IA</span>
               </h1>
 
@@ -181,13 +181,13 @@ export default function Landing() {
                       <span className="text-[10px] font-black text-foreground uppercase tracking-widest">Actividad Reciente</span>
                       <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                        <span className="text-[9px] text-primary font-black uppercase tracking-widest">Sincronizado</span>
+                        <span className="text-[9px] text-primary font-black uppercase tracking-widest">Actualizado</span>
                       </div>
                     </div>
                     <div className="space-y-4">
                       {[
                         { name: "Cliente_01", msg: "Consultando precios de planes...", time: "2m" },
-                        { name: "Asistente_IA", msg: "Enviando catálogo actualizado", time: "ahora" },
+                        { name: "Asistente", msg: "Enviando catálogo actualizado", time: "ahora" },
                       ].map((item) => (
                         <div key={item.name} className="flex items-center gap-4">
                           <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-[10px] font-black text-primary">
@@ -208,7 +208,7 @@ export default function Landing() {
                       <Brain className="w-5 h-5 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <div className="text-[10px] font-black text-foreground uppercase tracking-widest">Chatbot Inteligente Activo</div>
+                      <div className="text-[10px] font-black text-foreground uppercase tracking-widest">Asistente Virtual Activo</div>
                       <div className="text-[9px] text-primary/70 font-black uppercase tracking-widest">Respondiendo automáticamente</div>
                     </div>
                     <Activity className="w-4 h-4 text-primary animate-pulse" />

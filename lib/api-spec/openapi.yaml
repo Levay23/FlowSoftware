@@ -603,10 +603,10 @@ components:
           type: string
         role:
           type: string
-          enum: [admin, user, demo]
+          enum: [admin, user, demo, moderator]
         status:
           type: string
-          enum: [active, suspended]
+          enum: [active, suspended, pending_approval]
         createdAt:
           type: string
           format: date-time
@@ -932,7 +932,7 @@ components:
           type: string
         role:
           type: string
-          enum: [user, admin]
+          enum: [user, admin, moderator]
       required:
         - email
         - name
@@ -956,9 +956,9 @@ components:
           type: string
         role:
           type: string
-          enum: [user, admin]
+          enum: [user, admin, moderator]
         status:
           type: string
-          enum: [active, suspended]
+          enum: [active, suspended, pending_approval]
         password:
           type: string

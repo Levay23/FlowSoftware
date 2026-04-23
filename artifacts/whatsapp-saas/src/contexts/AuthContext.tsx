@@ -22,10 +22,18 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem("auth_token"));
+  const [token, setToken] = useState<string | null>(() => {
+    const t = localStorage.getItem("auth_token");
+    return t === "undefined" ? null : t;
+  });
   const [user, setUser] = useState<User | null>(() => {
     const stored = localStorage.getItem("auth_user");
-    return stored ? JSON.parse(stored) : null;
+    if (!stored || stored === "undefined") return null;
+    try {
+      return JSON.parse(stored);
+    } catch {
+      return null;
+    }
   });
 
   const login = (newToken: string, newUser: User) => {

@@ -128,14 +128,14 @@ export default function WhatsApp() {
               Estado de Conexión
             </div>
             <h1 className="text-4xl md:text-5xl font-black text-foreground tracking-tighter uppercase">
-              Conexión <span className="gradient-cyber">WhatsApp</span>
+              Configuración <span className="gradient-cyber">WhatsApp</span>
             </h1>
           </div>
           <div className="flex items-center gap-4">
-            <div className={`px-4 py-2 rounded-xl border flex items-center gap-3 ${isConnected ? "bg-primary/10 border-primary/30 text-primary glow-green-sm" : "bg-white/5 border-white/10 text-muted-foreground"}`}>
+            <div className={`px-4 py-2 rounded-xl border flex items-center gap-3 ${isConnected ? "bg-primary/10 border-primary/30 text-primary" : "bg-white/5 border-white/10 text-muted-foreground"}`}>
               <div className={`w-2 h-2 rounded-full ${isConnected ? "bg-primary animate-pulse shadow-[0_0_10px_#00ff88]" : "bg-muted-foreground"}`} />
               <span className="text-xs font-black uppercase tracking-tighter">
-                {isLoading ? "Verificando..." : isConnected ? "Sistema Online" : "Sistema Offline"}
+                {isLoading ? "Verificando..." : isConnected ? "Conectado" : "Desconectado"}
               </span>
             </div>
           </div>
@@ -149,14 +149,11 @@ export default function WhatsApp() {
               animate={{ opacity: 1, y: 0 }}
               className="glass-premium p-8 relative overflow-hidden"
             >
-              {/* Decorative scan line */}
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent animate-scan" />
-
               <div className="flex flex-col md:flex-row gap-10 items-center">
                 {/* QR Area */}
                 <div className="relative group">
-                  <div className="absolute -inset-4 bg-primary/5 rounded-[2rem] blur-2xl group-hover:bg-primary/10 transition-all" />
-                  <div className="relative w-72 h-72 lg:w-80 lg:h-80 bg-white rounded-3xl p-6 shadow-[0_0_50px_-10px_rgba(0,255,136,0.3)] flex items-center justify-center overflow-hidden">
+                  <div className="absolute -inset-4 bg-primary/5 rounded-[2rem] blur-2xl" />
+                  <div className="relative w-72 h-72 lg:w-80 lg:h-80 bg-white rounded-3xl p-6 shadow-xl flex items-center justify-center overflow-hidden">
                     <AnimatePresence mode="wait">
                       {isConnected ? (
                         <motion.div 
@@ -185,43 +182,31 @@ export default function WhatsApp() {
                           className="flex flex-col items-center gap-4 text-center"
                         >
                           <RefreshCw className="w-12 h-12 text-black/20 animate-spin" />
-                          <div className="text-[10px] font-black text-black/40 uppercase tracking-widest">Generando Protocolo</div>
+                          <div className="text-[10px] font-black text-black/40 uppercase tracking-widest">Preparando conexión...</div>
                         </motion.div>
                       )}
                     </AnimatePresence>
-                    
-                    {/* Corner accents */}
-                    <div className="absolute top-0 left-0 w-8 h-8 border-t-4 border-l-4 border-primary rounded-tl-xl" />
-                    <div className="absolute top-0 right-0 w-8 h-8 border-t-4 border-r-4 border-primary rounded-tr-xl" />
-                    <div className="absolute bottom-0 left-0 w-8 h-8 border-b-4 border-l-4 border-primary rounded-bl-xl" />
-                    <div className="absolute bottom-0 right-0 w-8 h-8 border-b-4 border-r-4 border-primary rounded-br-xl" />
-                    
-                    {!isConnected && qrCode && (
-                      <div className="absolute inset-0 bg-primary/5 pointer-events-none overflow-hidden">
-                        <div className="w-full h-1 bg-primary/20 absolute animate-scanning-beam" />
-                      </div>
-                    )}
                   </div>
                 </div>
 
                 {/* Instructions / Info */}
                 <div className="flex-1 space-y-6">
                   <div>
-                    <h3 className="text-xl font-black text-foreground uppercase tracking-tight">Sincronización de Núcleo</h3>
-                    <p className="text-sm text-muted-foreground mt-2 leading-relaxed">Sigue estos parámetros para establecer el enlace de datos con FlowSoftware.</p>
+                    <h3 className="text-xl font-black text-foreground uppercase tracking-tight">Vincular Dispositivo</h3>
+                    <p className="text-sm text-muted-foreground mt-2 leading-relaxed">Sigue estas instrucciones para conectar tu cuenta con la plataforma.</p>
                   </div>
 
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {[
-                      "Abre WhatsApp en tu dispositivo móvil.",
-                      "Accede al menú de 'Dispositivos Vinculados'.",
-                      "Escanea el código para autorizar el acceso de la IA."
+                      "Abre WhatsApp en tu teléfono.",
+                      "Toca en Configuración o Menú y selecciona Dispositivos vinculados.",
+                      "Apunta tu cámara hacia esta pantalla para escanear el código."
                     ].map((step, i) => (
-                      <div key={i} className="flex items-center gap-4 group">
-                        <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-xs font-black group-hover:bg-primary group-hover:text-black transition-all">
-                          0{i + 1}
+                      <div key={i} className="flex items-center gap-4">
+                        <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-xs font-black">
+                          {i + 1}
                         </div>
-                        <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">{step}</span>
+                        <span className="text-sm text-muted-foreground">{step}</span>
                       </div>
                     ))}
                   </div>
@@ -232,51 +217,20 @@ export default function WhatsApp() {
                         onClick={() => disconnectMutation.mutate()}
                         className="px-6 py-3 rounded-xl bg-destructive/10 text-destructive border border-destructive/20 text-sm font-black uppercase hover:bg-destructive/20 transition-all"
                       >
-                        Abortar Conexión
+                        Desconectar Cuenta
                       </button>
                     ) : (
                       <button 
                         onClick={forceReconnect}
                         disabled={forceLoading}
-                        className="px-8 py-3.5 rounded-xl bg-primary text-black text-sm font-black uppercase hover:bg-primary/90 transition-all glow-green flex items-center gap-2"
+                        className="px-8 py-3.5 rounded-xl bg-primary text-black text-sm font-black uppercase hover:bg-primary/90 transition-all flex items-center gap-2"
                       >
                         <Zap className="w-4 h-4 fill-current" />
-                        {forceLoading ? "Reiniciando..." : "Generar Nuevo Enlace"}
+                        {forceLoading ? "Reconectando..." : "Vincular Dispositivo"}
                       </button>
                     )}
                   </div>
                 </div>
-              </div>
-            </motion.div>
-
-            {/* Terminal Logs */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="bg-black/40 border border-white/5 rounded-2xl p-6 font-mono text-[11px]"
-            >
-              <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/5">
-                <div className="flex items-center gap-3">
-                  <TerminalIcon className="w-4 h-4 text-primary" />
-                  <span className="font-bold text-primary uppercase tracking-widest">System Logs</span>
-                </div>
-                <div className="flex gap-1.5">
-                  <div className="w-2 h-2 rounded-full bg-white/20" />
-                  <div className="w-2 h-2 rounded-full bg-white/20" />
-                  <div className="w-2 h-2 rounded-full bg-white/20" />
-                </div>
-              </div>
-              <div className="space-y-1.5 opacity-80 h-32 overflow-y-auto scrollbar-hide">
-                <div className="text-muted-foreground">[SYSTEM] Initializing WhatsApp provider...</div>
-                <div className="text-muted-foreground">[AUTH] Verifying previous session keys...</div>
-                {status?.hasPreviousSession && <div className="text-primary">[AUTH] Valid session token found.</div>}
-                <div className={`${isConnected ? "text-primary" : "text-yellow-400"}`}>
-                  [STATUS] Current state: {status?.status?.toUpperCase()}
-                </div>
-                {isConnected && <div className="text-primary">[CORE] Connection established successfully.</div>}
-                {!isConnected && <div className="text-muted-foreground italic">[WAIT] Waiting for QR scan from client...</div>}
-                <div className="animate-pulse">_</div>
               </div>
             </motion.div>
           </div>
@@ -289,18 +243,18 @@ export default function WhatsApp() {
               animate={{ opacity: 1, x: 0 }}
               className="glass-premium p-6"
             >
-              <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-6">Diagnóstico de Enlace</h4>
+              <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-6">Estado de Red</h4>
               <div className="space-y-6">
                 <div>
                   <div className="flex justify-between text-xs mb-2">
-                    <span className="text-muted-foreground">Calidad Señal</span>
+                    <span className="text-muted-foreground">Conectividad</span>
                     <span className="text-primary font-bold">100%</span>
                   </div>
                   <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
                     <motion.div 
                       initial={{ width: 0 }}
                       animate={{ width: isConnected ? "100%" : "30%" }}
-                      className="h-full bg-primary shadow-[0_0_10px_#00ff88]"
+                      className="h-full bg-primary"
                     />
                   </div>
                 </div>
@@ -316,7 +270,7 @@ export default function WhatsApp() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Shield className="w-4 h-4 text-primary" />
-                    <span className="text-xs font-bold text-foreground">Encriptación</span>
+                    <span className="text-xs font-bold text-foreground">Seguridad</span>
                   </div>
                   <span className="text-xs font-mono text-primary">AES-256</span>
                 </div>
@@ -330,7 +284,7 @@ export default function WhatsApp() {
               transition={{ delay: 0.1 }}
               className="glass-premium p-6"
             >
-              <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-6">Dispositivo Enlazado</h4>
+              <h4 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest mb-6">Cuenta Vinculada</h4>
               {isConnected && status?.phone ? (
                 <div className="space-y-4">
                   <div className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center gap-4">
@@ -339,40 +293,23 @@ export default function WhatsApp() {
                     </div>
                     <div>
                       <div className="text-sm font-black text-foreground">+{status.phone}</div>
-                      <div className="text-[10px] text-muted-foreground uppercase tracking-tighter">Identidad Verificada</div>
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-tighter">Verificado</div>
                     </div>
                   </div>
                   <div className="text-[10px] text-muted-foreground leading-relaxed italic">
-                    Este dispositivo está autorizado para emitir y recibir respuestas automáticas a través del núcleo FlowSoftware.
+                    Este dispositivo está autorizado para gestionar las respuestas automáticas.
                   </div>
                 </div>
               ) : (
                 <div className="text-center py-6 opacity-40">
                   <WifiOff className="w-10 h-10 mx-auto mb-2" />
-                  <p className="text-[10px] font-bold uppercase tracking-widest">Sin Enlace Activo</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest">Sin Conexión Activa</p>
                 </div>
               )}
             </motion.div>
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes scanning-beam {
-          0% { top: 0%; }
-          100% { top: 100%; }
-        }
-        .animate-scanning-beam {
-          animation: scanning-beam 3s linear infinite;
-        }
-        @keyframes scan {
-          0% { transform: translateY(0); }
-          100% { transform: translateY(320px); opacity: 0; }
-        }
-        .animate-scan {
-          animation: scan 4s linear infinite;
-        }
-      `}</style>
     </Layout>
   );
 }

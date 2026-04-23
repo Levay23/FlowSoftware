@@ -152,85 +152,6 @@ export default function Settings() {
               </div>
             </motion.div>
 
-            {/* Change password */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="glass-premium p-8"
-            >
-              <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
-                  <Lock className="w-5 h-5 text-purple-400" />
-                </div>
-                <div>
-                  <h2 className="text-sm font-black text-foreground uppercase tracking-tight">Seguridad de la Cuenta</h2>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Actualizar contraseña</p>
-                </div>
-              </div>
-
-              <form onSubmit={handleChangePassword} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Contraseña Actual</label>
-                    <input
-                      type="password"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="w-full bg-black/40 border border-white/5 rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:border-primary/50 transition-all font-mono"
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nueva Contraseña</label>
-                    <input
-                      type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full bg-black/40 border border-white/5 rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:border-primary/50 transition-all font-mono"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2 max-w-md">
-                  <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Confirmar Nueva Contraseña</label>
-                  <input
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full bg-black/40 border border-white/5 rounded-xl px-5 py-3 text-sm text-foreground focus:outline-none focus:border-primary/50 transition-all font-mono"
-                    required
-                  />
-                </div>
-
-                <AnimatePresence>
-                  {passwordError && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[10px] font-bold text-destructive bg-destructive/10 border border-destructive/20 rounded-xl px-4 py-3 uppercase tracking-widest">
-                      ERROR: {passwordError}
-                    </motion.div>
-                  )}
-                  {passwordSaved && (
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[10px] font-bold text-primary bg-primary/10 border border-primary/20 rounded-xl px-4 py-3 uppercase tracking-widest flex items-center gap-2">
-                      <CheckCircle className="w-3.5 h-3.5" />
-                      CONTRASEÑA ACTUALIZADA CON ÉXITO
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                <button
-                  type="submit"
-                  disabled={changePasswordMutation.isPending}
-                  className="flex items-center gap-3 px-8 py-4 bg-purple-500 text-black rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-purple-400 transition-all shadow-[0_0_20px_rgba(168,85,247,0.3)] disabled:opacity-50"
-                >
-                  <Shield className="w-4 h-4" />
-                  {changePasswordMutation.isPending ? "Actualizando..." : "Cambiar Contraseña"}
-                </button>
-              </form>
-            </motion.div>
-          </div>
-
-          <div className="space-y-8">
             {/* WhatsApp */}
             <motion.div 
               initial={{ opacity: 0, x: 20 }}
@@ -250,7 +171,7 @@ export default function Settings() {
 
               <div className="p-4 rounded-2xl bg-white/2 border border-white/5 mb-6">
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Desvincular tu cuenta invalidará la sesión de WhatsApp activa. Deberás re-escanear el código QR para restaurar el servicio.
+                  Al desvincular tu cuenta se cerrará la sesión activa. Deberás volver a vincular tu dispositivo para restaurar el servicio de automatización.
                 </p>
               </div>
 
@@ -264,39 +185,6 @@ export default function Settings() {
               </button>
             </motion.div>
 
-            {/* Danger zone */}
-            <motion.div 
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
-              className="p-8 rounded-[2.5rem] bg-destructive/5 border border-destructive/20 relative overflow-hidden group"
-            >
-              <div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                <LogOut className="w-24 h-24" />
-              </div>
-              <h2 className="text-xs font-black text-destructive uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                <Shield className="w-3.5 h-3.5" />
-                ZONA PELIGROSA
-              </h2>
-              <p className="text-[10px] text-muted-foreground uppercase tracking-widest leading-relaxed mb-6 opacity-60">
-                Al cerrar sesión se eliminarán los tokens de acceso y deberás volver a ingresar tus credenciales.
-              </p>
-              <button
-                onClick={logout}
-                className="w-full py-4 bg-destructive text-black rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-destructive/90 transition-all shadow-[0_10px_20px_-5px_rgba(239,68,68,0.3)]"
-              >
-                Cerrar Sesión Ahora
-              </button>
-            </motion.div>
-
-            {/* System Info */}
-            <div className="px-8 py-6 rounded-[2.5rem] glass border-white/5 flex items-center gap-4">
-              <Database className="w-5 h-5 text-muted-foreground opacity-30" />
-              <div>
-                <div className="text-[9px] font-black text-muted-foreground uppercase tracking-widest">Versión v4.2.0-stable</div>
-                <div className="text-[9px] font-black text-primary uppercase tracking-widest mt-0.5">Estado del Sistema: 100% Operativo</div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

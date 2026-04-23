@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useGetChatbotConfig, useUpdateChatbotConfig, getGetChatbotConfigQueryKey } from "@workspace/api-client-react";
+import { useGetChatbotConfig, useUpdateChatbotConfig, getGetChatbotConfigQueryKey, customFetch } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import Layout from "@/components/Layout";
 import { Bot, Save, ToggleLeft, ToggleRight, Sparkles } from "lucide-react";
@@ -57,24 +57,15 @@ export default function Chatbot() {
     setTestError("");
 
     try {
-      const response = await fetch(`${import.meta.env.BASE_URL}api/chatbot/test-reply`, {
+      const result = await customFetch<{ reply: string }>("/api/chatbot/test-reply", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({ message: testMessage }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "No se pudo generar respuesta");
-      }
-
-      setTestReply(data.reply);
+      setTestReply(result.reply);
     } catch (error) {
-      setTestError(error instanceof Error ? error.message : "No se pudo generar respuesta");
+      const e = error as { data?: { error?: string }; message?: string };
+      setTestError(e?.data?.error || e?.message || "No se pudo generar respuesta");
     } finally {
       setTesting(false);
     }

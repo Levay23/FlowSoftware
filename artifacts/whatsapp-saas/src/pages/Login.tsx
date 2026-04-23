@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { useLogin } from "@workspace/api-client-react";
+import { useLogin, customFetch } from "@workspace/api-client-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Zap, Eye, EyeOff } from "lucide-react";
 import Logo from "@/components/Logo";
@@ -40,15 +40,7 @@ export default function Login() {
     setError("");
 
     try {
-      const apiBase = import.meta.env.VITE_API_URL || import.meta.env.BASE_URL.replace(/\/$/, "");
-      console.log("Starting demo session via:", apiBase);
-      const response = await fetch(`${apiBase}/api/auth/demo`, { method: "POST" });
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data?.error || "No se pudo iniciar el demo");
-      }
-
+      const data = await customFetch<{ token: string; user: any }>("/api/auth/demo", { method: "POST" });
       login(data.token, data.user);
       setLocation("/dashboard");
     } catch {

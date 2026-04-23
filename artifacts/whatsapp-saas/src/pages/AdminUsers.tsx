@@ -4,6 +4,8 @@ import { Copy, Loader2, ShieldCheck, UserPlus, Users } from "lucide-react";
 import Layout from "@/components/Layout";
 import { useAuth } from "@/contexts/AuthContext";
 
+import { customFetch } from "@workspace/api-client-react";
+
 type AdminUser = {
   id: number;
   email: string;
@@ -17,8 +19,6 @@ type CreatedAccount = {
   password: string;
   name: string;
 };
-
-const apiBase = `${import.meta.env.BASE_URL}api`;
 
 export default function AdminUsers() {
   const { user, token } = useAuth();
@@ -47,19 +47,11 @@ export default function AdminUsers() {
       setError("");
 
       try {
-        const response = await fetch(`${apiBase}/admin/users`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error("No se pudieron cargar las cuentas");
-        }
-
-        setUsers(await response.json());
+        const data = await customFetch<AdminUser[]>("/api/admin/users");
+        setUsers(data);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Error cargando cuentas");
+        const e = err as { data?: { error?: string }; message?: string };
+        setError(e?.data?.error || e?.message || "Error cargando cuentas");
       } finally {
         setLoading(false);
       }
@@ -77,12 +69,8 @@ export default function AdminUsers() {
     setCreatedAccount(null);
 
     try {
-      const response = await fetch(`${apiBase}/admin/users`, {
+      const data = await customFetch<{ user: AdminUser; temporaryPassword?: string }>("/api/admin/users", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           name,
           email,
@@ -91,24 +79,19 @@ export default function AdminUsers() {
         }),
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "No se pudo crear la cuenta");
-      }
-
       setUsers((current) => [...current, data.user]);
       setCreatedAccount({
         email: data.user.email,
         name: data.user.name,
-        password: data.temporaryPassword,
+        password: data.temporaryPassword || "******",
       });
       setName("");
       setEmail("");
       setPassword("");
       setRole("user");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error creando cuenta");
+      const e = err as { data?: { error?: string }; message?: string };
+      setError(e?.data?.error || e?.message || "Error creando cuenta");
     } finally {
       setSaving(false);
     }

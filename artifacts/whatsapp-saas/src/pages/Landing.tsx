@@ -7,6 +7,7 @@ import {
   MessageCircle, Shield, BarChart3
 } from "lucide-react";
 import Logo from "@/components/Logo";
+import { customFetch } from "@workspace/api-client-react";
 
 const BENEFITS = [
   { icon: Clock, title: "Automatizacion 24/7", desc: "Tu bot trabaja mientras duermes. Responde preguntas, califica leads y cierra ventas a cualquier hora." },
@@ -37,10 +38,7 @@ export default function Landing() {
   const enterDemo = async () => {
     setDemoLoading(true);
     try {
-      const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-      const response = await fetch(`${base}/api/auth/demo`, { method: "POST" });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data?.error || "Error");
+      const data = await customFetch<{ token: string; user: any }>("/api/auth/demo", { method: "POST" });
       login(data.token, data.user);
       setLocation("/dashboard");
     } catch {

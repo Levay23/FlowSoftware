@@ -9,17 +9,21 @@ export async function seedAdminUser(): Promise<void> {
   const adminName = process.env["ADMIN_NAME"] || "Administrador";
 
   const [existing] = await db
-    .select({ id: usersTable.id })
+    .select()
     .from(usersTable)
-    .where(eq(usersTable.role, "admin"))
+    .where(eq(usersTable.email, adminEmail))
     .limit(1);
 
+  const passwordHash = await bcrypt.hash(adminPassword, 12);
+
   if (existing) {
-    logger.info("Admin user already exists, skipping seed");
+    await db
+      .update(usersTable)
+      .set({ passwordHash })
+      .where(eq(usersTable.email, adminEmail));
+    logger.info({ email: adminEmail }, "Default admin user password updated");
     return;
   }
-
-  const passwordHash = await bcrypt.hash(adminPassword, 12);
 
   await db.insert(usersTable).values({
     email: adminEmail,

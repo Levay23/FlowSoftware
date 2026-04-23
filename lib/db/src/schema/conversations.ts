@@ -1,27 +1,27 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { pgTable, serial, timestamp, boolean, text, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 import { usersTable } from "./users";
 import { contactsTable } from "./contacts";
 
-export const conversationsTable = sqliteTable("conversations", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const conversationsTable = pgTable("conversations", {
+  id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
   contactId: integer("contact_id").notNull().references(() => contactsTable.id, { onDelete: "cascade" }),
   lastMessage: text("last_message"),
-  lastMessageAt: integer("last_message_at", { mode: "timestamp" }),
+  lastMessageAt: timestamp("last_message_at"),
   unreadCount: integer("unread_count").notNull().default(0),
-  createdAt: integer("created_at", { mode: "timestamp" }).notNull().defaultNow(),
-  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().defaultNow().$onUpdate(() => new Date()),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow().$onUpdate(() => new Date()),
 });
 
-export const conversationMessagesTable = sqliteTable("conversation_messages", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
+export const conversationMessagesTable = pgTable("conversation_messages", {
+  id: serial("id").primaryKey(),
   conversationId: integer("conversation_id").notNull().references(() => conversationsTable.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
   direction: text("direction").notNull().default("outbound"),
-  isBot: integer("is_bot", { mode: "boolean" }).notNull().default(false),
-  sentAt: integer("sent_at", { mode: "timestamp" }).notNull().defaultNow(),
+  isBot: boolean("is_bot").notNull().default(false),
+  sentAt: timestamp("sent_at").notNull().defaultNow(),
 });
 
 export const insertConversationSchema = createInsertSchema(conversationsTable).omit({ id: true, createdAt: true, updatedAt: true });

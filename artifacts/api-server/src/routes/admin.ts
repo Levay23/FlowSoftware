@@ -4,6 +4,7 @@ import { randomUUID } from "crypto";
 import { db, usersTable } from "@workspace/db";
 import { asc, eq } from "drizzle-orm";
 import { authenticateToken, requireAdmin, type AuthRequest } from "../middlewares/auth";
+import { createFirebaseUser } from "../services/firebase";
 
 const router: IRouter = Router();
 
@@ -56,6 +57,9 @@ router.post("/admin/users", authenticateToken, requireAdmin, async (req: AuthReq
     name,
     role,
   }).returning();
+
+  // Add to Firebase Auth
+  await createFirebaseUser(email, temporaryPassword, name);
 
   res.status(201).json({
     user: serializeUser(user),

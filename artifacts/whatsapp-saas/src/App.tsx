@@ -31,8 +31,8 @@ function ApiSetup() {
   const { token } = useAuth();
 
   useEffect(() => {
-    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
-    setBaseUrl(base);
+    const apiBase = import.meta.env.VITE_API_URL || import.meta.env.BASE_URL.replace(/\/$/, "");
+    setBaseUrl(apiBase);
     setAuthTokenGetter(() => token ?? null);
   }, [token]);
 

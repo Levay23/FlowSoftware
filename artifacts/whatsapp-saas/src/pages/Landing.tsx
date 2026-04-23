@@ -6,11 +6,12 @@ import {
   CheckCircle, Smartphone, Brain, Send, Clock,
   MessageCircle, Shield, BarChart3
 } from "lucide-react";
+import Logo from "@/components/Logo";
 
 const BENEFITS = [
   { icon: Clock, title: "Automatizacion 24/7", desc: "Tu bot trabaja mientras duermes. Responde preguntas, califica leads y cierra ventas a cualquier hora." },
   { icon: Brain, title: "Respuestas Inteligentes", desc: "IA entrenada con tu informacion de negocio. Respuestas precisas y personalizadas para cada cliente." },
-  { icon: Send, title: "Envios Masivos", desc: "Llega a todos tus contactos de WhatsApp con un clic. Sistema anti-bloqueo con delays inteligentes." },
+  { icon: MessageCircle, title: "Chat en Vivo", desc: "Gestiona conversaciones manualmente cuando sea necesario con nuestra interfaz de chat fluido." },
   { icon: Users, title: "Gestion de Clientes", desc: "CRM integrado con historial de conversaciones y segmentacion avanzada de contactos." },
 ];
 
@@ -53,11 +54,8 @@ export default function Landing() {
       {/* Nav */}
       <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "glass border-b border-border" : ""}`}>
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-primary flex items-center justify-center glow-green-sm">
-              <Zap className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <span className="font-bold text-lg text-foreground">FlowSoftware</span>
+          <div className="flex items-center">
+            <Logo size="md" />
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
             <a href="#beneficios" className="hover:text-foreground transition-colors">Beneficios</a>
@@ -257,7 +255,7 @@ export default function Landing() {
             {[
               { step: "01", icon: Smartphone, title: "Conecta tu WhatsApp", desc: "Escanea el codigo QR desde tu telefono. Tu sesion queda activa permanentemente." },
               { step: "02", icon: Brain, title: "Entrena tu bot", desc: "Sube documentos sobre tus productos o servicios. La IA aprende y responde como experto." },
-              { step: "03", icon: TrendingUp, title: "Automatiza tus ventas", desc: "El bot responde 24/7, califica leads y envia mensajes masivos. Tu solo supervisas." },
+              { step: "03", icon: TrendingUp, title: "Automatiza tus ventas", desc: "El bot responde 24/7 y califica leads automáticamente. Tu solo supervisas los resultados." },
             ].map(({ step, icon: Icon, title, desc }, idx) => (
               <div key={step} className="relative text-center group">
                 {idx < 2 && (
@@ -297,7 +295,6 @@ export default function Landing() {
                   "Dashboard con estadisticas en tiempo real",
                   "Contactos de WhatsApp sincronizados automaticamente",
                   "Chat en vivo con historial de conversaciones",
-                  "Envios masivos con anti-bloqueo inteligente",
                   "Bot IA entrenable con tus documentos y Q&A",
                   "Analizador de documentos con IA (Groq)",
                 ].map((feature) => (
@@ -411,11 +408,8 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                  <Zap className="w-4 h-4 text-primary-foreground" />
-                </div>
-                <span className="font-bold text-foreground">FlowSoftware</span>
+              <div className="flex items-center mb-3">
+                <Logo size="sm" />
               </div>
               <p className="text-sm text-muted-foreground">La plataforma de automatizacion de WhatsApp mas completa del mercado.</p>
             </div>

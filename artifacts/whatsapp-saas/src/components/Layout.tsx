@@ -15,6 +15,7 @@ import {
   ShieldCheck,
   X,
 } from "lucide-react";
+import Logo from "./Logo";
 
 const navItems = [
   { path: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -76,14 +77,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-background lg:flex lg:h-screen lg:overflow-hidden">
       <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur lg:hidden">
         <div className="flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
-              <Zap className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <div className="min-w-0">
-              <div className="font-bold text-sm text-foreground">FlowSoftware</div>
-              <div className="text-xs text-muted-foreground truncate">{currentPage?.label ?? "Panel"}</div>
-            </div>
+          <div className="flex items-center min-w-0">
+            <Logo size="md" />
           </div>
           <button
             type="button"
@@ -122,14 +117,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </header>
 
       <aside className="hidden w-64 flex-shrink-0 border-r border-border lg:flex flex-col" style={{ background: "hsl(var(--sidebar))" }}>
-        <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Zap className="w-5 h-5 text-primary-foreground" />
-          </div>
-          <div>
-            <div className="font-bold text-sm text-foreground">FlowSoftware</div>
-            <div className="text-xs text-muted-foreground">SaaS Platform</div>
-          </div>
+        <div className="flex items-center px-6 py-8 border-b border-border justify-center">
+          <Logo size="md" />
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">

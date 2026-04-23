@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { logger } from "../lib/logger";
 
 export async function seedAdminUser(): Promise<void> {
-  const adminEmail = process.env["ADMIN_EMAIL"] || "admin@whatsbot.app";
+  const adminEmail = process.env["ADMIN_EMAIL"] || "admin@flowsoftware.app";
   const adminPassword = process.env["ADMIN_PASSWORD"] || "Admin2024!";
   const adminName = process.env["ADMIN_NAME"] || "Administrador";
 

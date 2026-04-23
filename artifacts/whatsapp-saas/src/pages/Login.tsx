@@ -3,6 +3,7 @@ import { Link, useLocation } from "wouter";
 import { useLogin } from "@workspace/api-client-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Zap, Eye, EyeOff } from "lucide-react";
+import Logo from "@/components/Logo";
 
 export default function Login() {
   const [, setLocation] = useLocation();
@@ -62,12 +63,8 @@ export default function Login() {
       </div>
 
       <div className="w-full max-w-md px-6 relative z-10">
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-primary/20 border border-primary/30 mb-4 glow-green">
-            <Zap className="w-7 h-7 text-primary" />
-          </div>
-          <h1 className="text-2xl font-bold text-foreground">FlowSoftware</h1>
+        <div className="text-center mb-8 flex flex-col items-center">
+          <Logo size="lg" className="mb-2" />
           <p className="text-muted-foreground text-sm mt-1">Inicia sesion en tu panel</p>
         </div>
 

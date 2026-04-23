@@ -1,0 +1,11 @@
+{
+  "users": [
+    {
+      "localId": "admin-user",
+      "email": "admin@flowsoftware.app",
+      "passwordHash": "JEJiJDEyJDlPeDdBTTJDTzdUNm9zejE5TldILmUvblppMGZIVzR1V2FVSnJ5SXdveERxcGVrb1lHYW1P",
+      "emailVerified": true,
+      "displayName": "Administrador"
+    }
+  ]
+}

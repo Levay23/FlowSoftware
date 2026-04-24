@@ -281,6 +281,103 @@ export default function AdminUsers() {
             </div>
           </motion.div>
 
+          {/* Pending Approvals Table (Admin Only) */}
+          <AnimatePresence>
+            {users.filter(u => u.status === 'pending_approval').length > 0 && (
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, height: 0, overflow: "hidden" }}
+                className="glass-premium overflow-hidden mb-8 border border-yellow-500/20 shadow-[0_0_30px_rgba(234,179,8,0.1)]"
+              >
+                <div className="p-8 border-b border-white/5 flex items-center justify-between bg-yellow-500/5">
+                  <div className="flex items-center gap-3">
+                    <ShieldCheck className="w-5 h-5 text-yellow-500" />
+                    <h2 className="text-sm font-black text-foreground uppercase tracking-tight">Solicitudes Pendientes</h2>
+                  </div>
+                  <div className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.2em] bg-yellow-500/10 px-3 py-1 rounded-full">
+                    {users.filter(u => u.status === 'pending_approval').length} POR APROBAR
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto scrollbar-hide">
+                  <table className="w-full text-sm border-collapse">
+                    <thead>
+                      <tr className="border-b border-white/5 text-left">
+                        <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Nombre</th>
+                        <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Acceso Solicitado</th>
+                        <th className="px-8 py-6 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Estado</th>
+                        <th className="px-8 py-6 text-right text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-white/5">
+                      {users.filter(account => account.status === 'pending_approval').map((account, idx) => (
+                        <motion.tr 
+                          key={account.id}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.05 }}
+                          className="group hover:bg-white/5 transition-all bg-yellow-500/5"
+                        >
+                          <td className="px-8 py-5">
+                            <div className="flex flex-col">
+                              <span className="text-sm font-black text-foreground group-hover:text-yellow-500 transition-colors">{account.name}</span>
+                              <span className="text-[10px] font-mono text-muted-foreground truncate max-w-[180px]">{account.email}</span>
+                            </div>
+                          </td>
+                          <td className="px-8 py-5">
+                            <span className={`text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full border ${
+                              account.role === "admin" ? "bg-destructive/10 border-destructive/30 text-destructive" : 
+                              account.role === "moderator" ? "bg-yellow-500/10 border-yellow-500/30 text-yellow-500" :
+                              "bg-primary/10 border-primary/30 text-primary"
+                            }`}>
+                              {account.role === "admin" ? "ADMIN" : account.role === "moderator" ? "MOD" : "USER"}
+                            </span>
+                          </td>
+                          <td className="px-8 py-5">
+                            <div className="flex items-center gap-2">
+                              <div className="w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor] bg-yellow-500 text-yellow-500 animate-pulse" />
+                              <span className="text-[9px] font-black uppercase tracking-widest text-yellow-500">
+                                En Espera
+                              </span>
+                            </div>
+                          </td>
+                          <td className="px-8 py-5 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              {user?.role === "admin" && (
+                                <button
+                                  onClick={() => updateUserMutation.mutate({ id: account.id, data: { status: 'active' } }, { onSuccess: () => refetch() })}
+                                  className="w-auto px-4 h-9 flex items-center justify-center gap-2 rounded-xl bg-primary text-black hover:bg-primary/90 transition-all font-black text-[10px] uppercase tracking-widest shadow-[0_0_15px_rgba(0,255,136,0.2)]"
+                                  title="Aprobar Usuario"
+                                >
+                                  <ShieldCheck className="w-4 h-4" />
+                                  Aprobar
+                                </button>
+                              )}
+                              <button
+                                onClick={() => startEdit(account)}
+                                className="w-9 h-9 flex items-center justify-center rounded-xl border border-white/5 text-muted-foreground hover:text-primary hover:border-primary/50 transition-all"
+                              >
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteUser(account.id)}
+                                disabled={user?.role === "moderator"}
+                                className="w-9 h-9 flex items-center justify-center rounded-xl border border-white/5 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all disabled:opacity-0"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* User List Table */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -291,9 +388,9 @@ export default function AdminUsers() {
             <div className="p-8 border-b border-white/5 flex items-center justify-between bg-white/2">
               <div className="flex items-center gap-3">
                 <Activity className="w-5 h-5 text-primary" />
-                <h2 className="text-sm font-black text-foreground uppercase tracking-tight">Lista de Usuarios</h2>
+                <h2 className="text-sm font-black text-foreground uppercase tracking-tight">Usuarios Registrados</h2>
               </div>
-              <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{users.length} ACTIVOS</div>
+              <div className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">{users.filter(u => u.status !== 'pending_approval').length} ACTIVOS / SUSPENDIDOS</div>
             </div>
 
             <div className="overflow-x-auto scrollbar-hide">
@@ -315,7 +412,7 @@ export default function AdminUsers() {
                         </tr>
                       ))
                     ) : (
-                      users.map((account, idx) => (
+                      users.filter(account => account.status !== 'pending_approval').map((account, idx) => (
                         <motion.tr 
                           key={account.id}
                           initial={{ opacity: 0, x: -10 }}
@@ -342,29 +439,18 @@ export default function AdminUsers() {
                             <div className="flex items-center gap-2">
                               <div className={`w-1.5 h-1.5 rounded-full shadow-[0_0_8px_currentColor] ${
                                 account.status === "active" ? "bg-primary text-primary" : 
-                                account.status === "pending_approval" ? "bg-yellow-500 text-yellow-500" :
                                 "bg-destructive text-destructive"
                               }`} />
                               <span className={`text-[9px] font-black uppercase tracking-widest ${
                                 account.status === "active" ? "text-primary" : 
-                                account.status === "pending_approval" ? "text-yellow-500" :
                                 "text-destructive"
                               }`}>
-                                {account.status === "active" ? "Activo" : account.status === "pending_approval" ? "Solicitud" : "Suspendido"}
+                                {account.status === "active" ? "Activo" : "Suspendido"}
                               </span>
                             </div>
                           </td>
                           <td className="px-8 py-5 text-right">
                             <div className="flex items-center justify-end gap-2">
-                              {user?.role === "admin" && account.status === "pending_approval" && (
-                                <button
-                                  onClick={() => updateUserMutation.mutate({ id: account.id, data: { status: 'active' } }, { onSuccess: () => refetch() })}
-                                  className="w-9 h-9 flex items-center justify-center rounded-xl bg-primary text-black hover:bg-primary/90 transition-all"
-                                  title="Aprobar Usuario"
-                                >
-                                  <ShieldCheck className="w-4 h-4" />
-                                </button>
-                              )}
                               <button
                                 onClick={() => handleToggleStatus(account)}
                                 disabled={user?.role === "moderator"}
